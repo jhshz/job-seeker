@@ -16,7 +16,7 @@ export function errorHandler(
   err: Error | AppError,
   req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ): void {
   console.error(`[${new Date().toISOString()}] Error:`, {
     message: err.message,
@@ -27,7 +27,13 @@ export function errorHandler(
 
   const statusCode = err instanceof AppError ? err.statusCode : 500;
 
-  const response: any = {
+  const response: {
+    success: boolean;
+    error: string;
+    timestamp: string;
+    path: string;
+    stack?: string;
+  } = {
     success: false,
     error: err.message || "Internal Server Error",
     timestamp: new Date().toISOString(),
