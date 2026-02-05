@@ -25,23 +25,14 @@
 
     "baseUrl": "./src",
     "paths": {
-      "@models/*": ["models/*"],
       "@models": ["models/index.ts"],
-      "@enums/*": ["enums/*"],
       "@enums": ["enums/index.ts"],
-      "@types/*": ["types/*"],
       "@types": ["types/index.ts"],
-      "@controllers/*": ["controllers/*"],
       "@controllers": ["controllers/index.ts"],
-      "@routes/*": ["routes/*"],
       "@routes": ["routes/index.ts"],
-      "@middlewares/*": ["middlewares/*"],
       "@middlewares": ["middlewares/index.ts"],
-      "@services/*": ["services/*"],
       "@services": ["services/index.ts"],
-      "@utils/*": ["utils/*"],
       "@utils": ["utils/index.ts"],
-      "@configs/*": ["configs/*"],
       "@configs": ["configs/index.ts"]
     }
   },
