@@ -1,0 +1,29 @@
+{
+  "name": "job-seeker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Job seeker MERN stack monorepo application",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:backend": "npm run dev --workspace=@job-seeker/backend",
+    "dev:frontend": "npm run dev --workspace=@job-seeker/frontend",
+    "build": "npm run build --workspaces --if-present",
+    "build:backend": "npm run build --workspace=@job-seeker/backend",
+    "build:frontend": "npm run build --workspace=@job-seeker/frontend",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:backend": "npm run lint --workspace=@job-seeker/backend",
+    "lint:frontend": "npm run lint --workspace=@job-seeker/frontend",
+    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
