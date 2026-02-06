@@ -1,10 +1,22 @@
 import mongoose, { Schema, type Document, type Model } from "mongoose";
+import { OtpPurpose, type OtpPurpose as OtpPurposeType } from "@enums";
 
-export type OtpPurpose = "login" | "register";
+// Re-export for consumers importing from @models (backward compat)
+export { OtpPurpose };
+export type { OtpPurposeType };
 
+/**
+ * OtpRequest - OTP login/register flow.
+ *
+ * Design decisions:
+ * - Only codeHash stored (never raw OTP) - minimal PII/security
+ * - TTL on expiresAt: MongoDB auto-removes expired docs
+ * - verifiedUserId: optional link when OTP creates/verifies user (audit trail)
+ * - Composite indexes support: latest active OTP by phone+purpose, rate-limiting, TTL cleanup
+ */
 export interface IOtpRequest extends Document {
   phoneE164: string;
-  purpose: OtpPurpose;
+  purpose: OtpPurposeType;
   codeHash: string;
   expiresAt: Date;
   attemptsLeft: number;
@@ -12,7 +24,10 @@ export interface IOtpRequest extends Document {
   requestIp: string;
   userAgent: string;
   usedAt: Date | null;
+  /** Set when OTP is consumed and user is created/verified - for audit */
+  verifiedUserId: mongoose.Types.ObjectId | null;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const otpRequestSchema = new Schema<IOtpRequest>(
@@ -24,7 +39,7 @@ const otpRequestSchema = new Schema<IOtpRequest>(
     },
     purpose: {
       type: String,
-      enum: ["login", "register"],
+      enum: Object.values(OtpPurpose),
       required: true,
     },
     codeHash: {
@@ -34,7 +49,6 @@ const otpRequestSchema = new Schema<IOtpRequest>(
     expiresAt: {
       type: Date,
       required: true,
-      index: { expireAfterSeconds: 0 }, // TTL index
     },
     attemptsLeft: {
       type: Number,
@@ -57,16 +71,27 @@ const otpRequestSchema = new Schema<IOtpRequest>(
       type: Date,
       default: null,
     },
+    verifiedUserId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
-// Indexes
-otpRequestSchema.index({ phoneE164: 1, createdAt: -1 });
-// Note: expiresAt already has index: { expireAfterSeconds: 0 } in the field definition, so we don't need to add it again
+// TTL index: MongoDB removes expired OTPs
+otpRequestSchema.index(
+  { expiresAt: 1 },
+  { expireAfterSeconds: 0 },
+);
+
+// Latest active OTP by phone + purpose (for verification and resend cooldown)
+otpRequestSchema.index({ phoneE164: 1, purpose: 1, usedAt: 1, createdAt: -1 });
+// Rate-limiting by IP
 otpRequestSchema.index({ requestIp: 1, createdAt: -1 });
+// Rate-limiting by phone
+otpRequestSchema.index({ phoneE164: 1, createdAt: -1 });
 
 export const OtpRequest: Model<IOtpRequest> =
   mongoose.models.OtpRequest ||

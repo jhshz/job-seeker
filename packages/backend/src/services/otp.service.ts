@@ -1,13 +1,13 @@
 import crypto from "crypto";
 import { config } from "@configs";
-import { OtpRequest, type OtpPurpose } from "@models";
+import { OtpRequest, type OtpPurposeType } from "@models";
 import { hashOtpCode, verifyOtpCode } from "@utils";
 import { smsProvider } from "./sms.service";
 import { AppError } from "@middlewares";
 
 export interface CreateOtpRequestParams {
   phoneE164: string;
-  purpose: OtpPurpose;
+  purpose: OtpPurposeType;
   requestIp: string;
   userAgent: string;
 }
@@ -97,7 +97,7 @@ export class OtpService {
    */
   async verifyOtp(params: VerifyOtpParams): Promise<{
     phoneE164: string;
-    purpose: OtpPurpose;
+    purpose: OtpPurposeType;
   }> {
     const { requestId, code } = params;
 
