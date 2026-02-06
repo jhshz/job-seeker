@@ -1,6 +1,6 @@
 // packages/backend/src/routes/auth.routes.ts
 import { Router } from "express";
-import * as authController from "@controllers/auth.controller";
+import * as authController from "../controllers/auth.controller";
 import {
   requireAuth,
   validateRequest,

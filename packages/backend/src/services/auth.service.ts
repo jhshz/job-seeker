@@ -4,6 +4,10 @@ import { tokenService } from "./token.service";
 import { hashPassword, verifyPassword } from "@utils";
 import { AppError } from "@middlewares";
 
+export interface CreateUserParams {
+  phoneE164: string;
+}
+
 export interface PasswordLoginParams {
   phoneE164: string;
   password: string;

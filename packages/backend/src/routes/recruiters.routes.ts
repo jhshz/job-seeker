@@ -1,7 +1,7 @@
 // packages/backend/src/routes/recruiters.routes.ts
 import { Router } from "express";
-import * as recruiterController from "@controllers/recruiter.controller";
-import * as jobController from "@controllers/job.controller";
+import * as recruiterController from "../controllers/recruiter.controller";
+import * as jobController from "../controllers/job.controller";
 import { requireAuth, requireRole, validateRequest } from "@middlewares";
 import {
   updateRecruiterProfileSchema,

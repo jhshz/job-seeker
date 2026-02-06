@@ -51,10 +51,6 @@ export const seekerResumeIdParamSchema = z.object({
   resumeId: mongoIdSchema,
 });
 
-export const jobIdParamSchema = z.object({
-  jobId: mongoIdSchema,
-});
-
 export type UpdateSeekerProfileInput = z.infer<typeof updateSeekerProfileSchema>;
 export type CreateResumeInput = z.infer<typeof createResumeSchema>;
 export type ApplyJobInput = z.infer<typeof applyJobSchema>;

@@ -33,12 +33,13 @@ export const getMyApplications = catchAsync(async (req: Request, res: Response):
     Number(limit),
     status as string | undefined,
   );
-  sendSuccess(res, list, 200, meta);
+  sendSuccess(res, list, 200, meta as unknown as Record<string, unknown>);
 });
 
 export const applyToJob = catchAsync(async (req: Request, res: Response): Promise<void> => {
   const seekerId = await getSeekerProfileId(req);
-  const { jobId } = req.params;
+  const jobId = req.params.jobId;
+  if (typeof jobId !== "string") throw new AppError("Invalid job id", 400, false, "INVALID_PARAMS");
   const application = await seekerService.applyToJob(seekerId, jobId, req.body);
   sendSuccess(res, application, 201);
 });
@@ -57,7 +58,8 @@ export const createResume = catchAsync(async (req: Request, res: Response): Prom
 
 export const activateResume = catchAsync(async (req: Request, res: Response): Promise<void> => {
   const seekerId = await getSeekerProfileId(req);
-  const { resumeId } = req.params;
+  const resumeId = req.params.resumeId;
+  if (typeof resumeId !== "string") throw new AppError("Invalid resume id", 400, false, "INVALID_PARAMS");
   const resume = await seekerService.activateResume(seekerId, resumeId);
   sendSuccess(res, resume);
 });

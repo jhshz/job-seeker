@@ -29,7 +29,8 @@ export function clearAuthCookies(res: Response): void {
 export function getRefreshTokenFromCookie(cookieHeader: string | undefined): string | null {
   if (!cookieHeader) return null;
   const match = cookieHeader.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
-  return match ? decodeURIComponent(match[1].trim()) : null;
+  const value = match?.[1];
+  return value != null ? decodeURIComponent(value.trim()) : null;
 }
 
 export const REFRESH_COOKIE_NAME = COOKIE_NAME;

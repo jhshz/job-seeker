@@ -86,7 +86,6 @@ const seekerProfileSchema = new Schema<ISeekerProfile>(
   { timestamps: true },
 );
 
-seekerProfileSchema.index({ userId: 1 });
 seekerProfileSchema.index({ skills: 1 });
 seekerProfileSchema.index({ location: 1 });
 

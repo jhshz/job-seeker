@@ -2,7 +2,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { tokenService } from "@services";
 import { User } from "@models";
-import type { RequestUser } from "@types";
 
 /**
  * Attaches req.user if valid Bearer token present; otherwise continues without user.

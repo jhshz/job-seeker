@@ -35,19 +35,21 @@ export const listJobs = catchAsync(async (req: Request, res: Response): Promise<
     Number(limit),
     status as string | undefined,
   );
-  sendSuccess(res, list, 200, meta);
+  sendSuccess(res, list, 200, meta as unknown as Record<string, unknown>);
 });
 
 export const updateJob = catchAsync(async (req: Request, res: Response): Promise<void> => {
   const recruiterId = await getRecruiterId(req);
-  const { jobId } = req.params;
+  const jobId = req.params.jobId;
+  if (typeof jobId !== "string") throw new AppError("Invalid job id", 400, false, "INVALID_PARAMS");
   const job = await recruiterService.updateJob(recruiterId, jobId, req.body);
   sendSuccess(res, job);
 });
 
 export const getJobApplications = catchAsync(async (req: Request, res: Response): Promise<void> => {
   const recruiterId = await getRecruiterId(req);
-  const { jobId } = req.params;
+  const jobId = req.params.jobId;
+  if (typeof jobId !== "string") throw new AppError("Invalid job id", 400, false, "INVALID_PARAMS");
   const { page = 1, limit = 20, status } = req.query;
   const { list, meta } = await recruiterService.getJobApplications(
     recruiterId,
@@ -56,5 +58,5 @@ export const getJobApplications = catchAsync(async (req: Request, res: Response)
     Number(limit),
     status as string | undefined,
   );
-  sendSuccess(res, list, 200, meta);
+  sendSuccess(res, list, 200, meta as unknown as Record<string, unknown>);
 });

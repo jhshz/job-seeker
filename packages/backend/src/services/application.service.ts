@@ -1,5 +1,4 @@
 // packages/backend/src/services/application.service.ts
-import mongoose from "mongoose";
 import { JobApplication } from "@models";
 import { AppError } from "@middlewares";
 

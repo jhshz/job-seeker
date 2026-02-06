@@ -1,6 +1,6 @@
 // packages/backend/src/routes/seekers.routes.ts
 import { Router } from "express";
-import * as seekerController from "@controllers/seeker.controller";
+import * as seekerController from "../controllers/seeker.controller";
 import { requireAuth, requireRole, validateRequest } from "@middlewares";
 import {
   updateSeekerProfileSchema,

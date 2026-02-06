@@ -1,5 +1,4 @@
 // packages/backend/src/services/job.service.ts
-import mongoose from "mongoose";
 import { Job } from "@models";
 import { AppError } from "@middlewares";
 import type { ListJobsQueryInput } from "@schemas";

@@ -5,7 +5,7 @@ import { phoneE164Schema } from "./common.schemas";
 export const otpRequestSchema = z.object({
   phoneE164: phoneE164Schema,
   purpose: z.enum(["login", "register"], {
-    errorMap: () => ({ message: "Purpose must be 'login' or 'register'" }),
+    message: "Purpose must be 'login' or 'register'",
   }),
 });
 

@@ -1,7 +1,7 @@
 // packages/backend/src/routes/jobs.routes.ts
 import { Router } from "express";
-import * as jobController from "@controllers/job.controller";
-import * as seekerController from "@controllers/seeker.controller";
+import * as jobController from "../controllers/job.controller";
+import * as seekerController from "../controllers/seeker.controller";
 import { requireAuth, requireRole, validateRequest } from "@middlewares";
 import { listJobsQuerySchema, jobIdParamSchema } from "@schemas";
 import { applyJobSchema } from "@schemas";
