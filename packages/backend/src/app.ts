@@ -6,6 +6,7 @@ import compression from "compression";
 import { config } from "@configs";
 import { logger, errorHandler, notFound } from "@middlewares";
 import routes from "@routes";
+import { setupSwagger } from "./docs/swagger";
 
 export function createApp(): Express {
   const app = express();
@@ -46,6 +47,8 @@ export function createApp(): Express {
   });
 
   app.use("/api", routes);
+
+  setupSwagger(app);
 
   // 404 handler
   app.use(notFound);

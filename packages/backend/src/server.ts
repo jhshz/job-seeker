@@ -9,11 +9,14 @@ const startServer = async () => {
     await connectDB();
 
     const server = app.listen(PORT, () => {
+      const baseUrl = `http://localhost:${PORT}`;
       console.log(`
       Server started!
       Port: ${PORT}
       Environment: ${config.NODE_ENV}
-      URL: http://localhost:${PORT}
+      URL: ${baseUrl}
+      API Docs: ${baseUrl}/api-docs
+      Health: ${baseUrl}/api/health
       `);
     });
 
