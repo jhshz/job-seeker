@@ -12,7 +12,6 @@ job-seeker/
 ├── .husky/              # Git hooks configuration
 ├── tsconfig.base.json   # Base TypeScript configuration
 ├── .eslintrc.base.js    # Base ESLint configuration
-├── .prettierrc.json     # Prettier configuration
 └── package.json         # Root workspace configuration
 ```
 
@@ -85,18 +84,6 @@ yarn lint:backend
 yarn lint:frontend
 ```
 
-### Formatting
-
-Format all files with Prettier:
-```bash
-yarn format
-```
-
-Check formatting without making changes:
-```bash
-yarn format:check
-```
-
 ## 📦 Workspace Packages
 
 ### @job-seeker/backend
@@ -109,8 +96,6 @@ Express.js backend API with TypeScript.
   - `yarn build` - Compile TypeScript to JavaScript
   - `yarn start` - Run production server
   - `yarn lint` - Run ESLint
-  - `yarn format` - Format code with Prettier
-
 ### @job-seeker/frontend
 
 React frontend application with Vite and Chakra UI.
@@ -121,8 +106,6 @@ React frontend application with Vite and Chakra UI.
   - `yarn build` - Build for production
   - `yarn preview` - Preview production build
   - `yarn lint` - Run ESLint
-  - `yarn format` - Format code with Prettier
-
 ## 🛠️ Monorepo Features
 
 This project uses **Yarn Workspaces** to manage multiple packages:
@@ -130,8 +113,7 @@ This project uses **Yarn Workspaces** to manage multiple packages:
 - ✅ **Yarn Workspaces**: Centralized dependency management with hoisting
 - ✅ **Shared TypeScript Config**: Base `tsconfig.base.json` extended by all packages
 - ✅ **Shared ESLint Config**: Base `.eslintrc.base.js` with consistent linting rules
-- ✅ **Prettier Integration**: Automatic code formatting with pre-commit hooks
-- ✅ **Git Hooks**: Husky configured for pre-commit formatting checks
+- ✅ **Git Hooks**: Husky configured for pre-commit
 - ✅ **Dependency Management**: Scripts for checking outdated packages and security audits
 
 ## 📝 Environment Variables
@@ -191,9 +173,8 @@ This monorepo includes the following improvements:
 1. ✅ **Yarn Workspaces** - Better dependency management and performance
 2. ✅ **Base TypeScript Config** - Consistent TypeScript settings across packages
 3. ✅ **Base ESLint Config** - Unified linting rules
-4. ✅ **Prettier** - Automatic code formatting
-5. ✅ **Pre-commit Hooks** - Format checking before commits
-6. ✅ **Dependency Management Scripts** - Easy checking and updating
+4. ✅ **Pre-commit Hooks** - Husky Git hooks
+5. ✅ **Dependency Management Scripts** - Easy checking and updating
 
 ## 📄 License
 

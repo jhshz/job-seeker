@@ -17,8 +17,6 @@
     "lint": "yarn workspaces foreach -A run lint",
     "lint:backend": "yarn workspace @job-seeker/backend lint",
     "lint:frontend": "yarn workspace @job-seeker/frontend lint",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "clean": "yarn workspaces foreach -A run clean && rm -rf node_modules",
     "outdated": "yarn outdated",
     "audit": "yarn audit",
@@ -30,7 +28,6 @@
     "concurrently": "^9.1.2",
     "eslint": "^9.39.2",
     "husky": "^6.0.0",
-    "prettier": "^3.4.2",
     "typescript": "^5.9.3"
   },
   "engines": {

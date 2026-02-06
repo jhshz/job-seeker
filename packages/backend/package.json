@@ -9,8 +9,6 @@
     "start": "node dist/server.js",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "format": "prettier --write \"src/**/*.{ts,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,json}\"",
     "clean": "rm -rf dist",
     "prebuild": "yarn clean",
     "postbuild": "echo 'Build completed successfully!'",
