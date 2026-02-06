@@ -1,32 +1,25 @@
+// packages/backend/src/schemas/auth.schemas.ts
 import { z } from "zod";
-
-/**
- * Zod schemas for authentication endpoints
- */
+import { phoneE164Schema } from "./common.schemas";
 
 export const otpRequestSchema = z.object({
-  phone: z
-    .string()
-    .min(1, "Phone number is required")
-    .regex(/^[\d\s\-+]+$/, "Phone number contains invalid characters"),
+  phoneE164: phoneE164Schema,
   purpose: z.enum(["login", "register"], {
-    error: "Purpose must be 'login' or 'register'",
+    errorMap: () => ({ message: "Purpose must be 'login' or 'register'" }),
   }),
 });
 
 export const otpVerifySchema = z.object({
-  requestId: z.string().min(1, "Request ID is required"),
+  phoneE164: phoneE164Schema,
+  purpose: z.enum(["login", "register"]),
   code: z
     .string()
-    .length(6, "OTP code must be exactly 6 digits")
-    .regex(/^\d{6}$/, "OTP code must contain only digits"),
+    .length(6, "OTP must be 6 digits")
+    .regex(/^\d{6}$/, "OTP must contain only digits"),
 });
 
 export const passwordLoginSchema = z.object({
-  phone: z
-    .string()
-    .min(1, "Phone number is required")
-    .regex(/^[\d\s\-+]+$/, "Phone number contains invalid characters"),
+  phoneE164: phoneE164Schema,
   password: z.string().min(1, "Password is required"),
 });
 
@@ -37,10 +30,13 @@ export const setPasswordSchema = z.object({
     .max(128, "Password must be at most 128 characters"),
 });
 
-export const refreshTokenSchema = z.object({
-  refreshToken: z.string().min(1, "Refresh token is required"),
+export const refreshTokenBodySchema = z.object({
+  refreshToken: z.string().min(1).optional(),
 });
 
-export const logoutSchema = z.object({
-  refreshToken: z.string().min(1, "Refresh token is required"),
-});
+export const logoutSchema = z.object({});
+
+export type OtpRequestInput = z.infer<typeof otpRequestSchema>;
+export type OtpVerifyInput = z.infer<typeof otpVerifySchema>;
+export type PasswordLoginInput = z.infer<typeof passwordLoginSchema>;
+export type SetPasswordInput = z.infer<typeof setPasswordSchema>;

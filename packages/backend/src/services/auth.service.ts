@@ -1,16 +1,11 @@
-import bcrypt from "bcryptjs";
 import { User, type IUser } from "@models";
-import { normalizeIranPhoneToE164 } from "@utils";
 import { otpService } from "./otp.service";
 import { tokenService } from "./token.service";
+import { hashPassword, verifyPassword } from "@utils";
 import { AppError } from "@middlewares";
 
-export interface CreateUserParams {
-  phoneE164: string;
-}
-
 export interface PasswordLoginParams {
-  phone: string;
+  phoneE164: string;
   password: string;
 }
 
@@ -44,62 +39,58 @@ export class AuthService {
   }
 
   /**
-   * Verifies OTP and creates/updates user
+   * Verifies OTP by phoneE164 + purpose + code, then create/update user and return tokens
    */
   async verifyOtpAndLogin(
-    requestId: string,
+    phoneE164: string,
+    purpose: string,
     code: string,
     ip: string,
     userAgent: string,
   ) {
-    // Verify OTP
-    const { phoneE164 } = await otpService.verifyOtp({ requestId, code });
+    const { phoneE164: verifiedPhone } = await otpService.verifyOtpByPhonePurposeCode(
+      phoneE164,
+      purpose as "login" | "register",
+      code,
+    );
 
-    // Get or create user
-    let user = await User.findOne({ phoneE164 });
-
+    let user = await User.findOne({ phoneE164: verifiedPhone });
     if (!user) {
       user = await User.create({
-        phoneE164,
+        phoneE164: verifiedPhone,
         isPhoneVerified: true,
         status: "active",
         passwordVersion: 0,
       });
     } else {
-      // Update user
       user.isPhoneVerified = true;
       user.lastLoginAt = new Date();
       await user.save();
     }
 
-    // Generate tokens
     const tokens = await tokenService.generateTokens(user, ip, userAgent);
-
     return {
       user: {
         id: user._id.toString(),
         phoneE164: user.phoneE164,
         isPhoneVerified: user.isPhoneVerified,
         status: user.status,
+        roles: user.roles,
       },
       tokens,
     };
   }
 
   /**
-   * Login with phone and password
+   * Login with phoneE164 and password
    */
   async passwordLogin(
     params: PasswordLoginParams,
     ip: string,
     userAgent: string,
   ) {
-    const { phone, password } = params;
+    const { phoneE164, password } = params;
 
-    // Normalize phone
-    const phoneE164 = normalizeIranPhoneToE164(phone);
-
-    // Find user
     const user = await User.findOne({ phoneE164 });
 
     if (!user) {
@@ -111,8 +102,7 @@ export class AuthService {
       throw new AppError("Password not set for this account", 409, false);
     }
 
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    const isValidPassword = await verifyPassword(password, user.passwordHash);
 
     if (!isValidPassword) {
       throw new AppError("Invalid phone or password", 401);
@@ -131,6 +121,7 @@ export class AuthService {
         phoneE164: user.phoneE164,
         isPhoneVerified: user.isPhoneVerified,
         status: user.status,
+        roles: user.roles,
       },
       tokens,
     };
@@ -148,8 +139,7 @@ export class AuthService {
       throw new AppError("User not found", 404);
     }
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(newPassword, 12);
+    const passwordHash = await hashPassword(newPassword);
 
     // Update user
     user.passwordHash = passwordHash;

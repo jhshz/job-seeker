@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { config } from "@configs";
-import { OtpRequest, type OtpPurposeType } from "@models";
+import { OtpRequest, type IOtpRequest, type OtpPurposeType } from "@models";
 import { hashOtpCode, verifyOtpCode } from "@utils";
 import { smsProvider } from "./sms.service";
 import { AppError } from "@middlewares";
@@ -93,39 +93,53 @@ export class OtpService {
   }
 
   /**
-   * Verifies an OTP code
+   * Verifies an OTP code by requestId (legacy)
    */
   async verifyOtp(params: VerifyOtpParams): Promise<{
     phoneE164: string;
     purpose: OtpPurposeType;
   }> {
-    const { requestId, code } = params;
+    const otpRequest = await OtpRequest.findById(params.requestId);
+    return this._consumeOtpRequest(otpRequest, params.code);
+  }
 
-    const otpRequest = await OtpRequest.findById(requestId);
+  /**
+   * Verifies OTP by phoneE164 + purpose + code (latest active request)
+   */
+  async verifyOtpByPhonePurposeCode(
+    phoneE164: string,
+    purpose: OtpPurposeType,
+    code: string,
+  ): Promise<{ phoneE164: string; purpose: OtpPurposeType }> {
+    const otpRequest = await OtpRequest.findOne({
+      phoneE164,
+      purpose,
+      usedAt: null,
+    })
+      .sort({ createdAt: -1 })
+      .exec();
 
+    return this._consumeOtpRequest(otpRequest, code);
+  }
+
+  private async _consumeOtpRequest(
+    otpRequest: IOtpRequest | null,
+    code: string,
+  ): Promise<{ phoneE164: string; purpose: OtpPurposeType }> {
     if (!otpRequest) {
       throw new AppError("Invalid OTP request", 400);
     }
-
-    // Check if already used
     if (otpRequest.usedAt) {
       throw new AppError("OTP has already been used", 400);
     }
-
-    // Check if expired
     if (new Date() > otpRequest.expiresAt) {
       throw new AppError("OTP has expired", 400);
     }
-
-    // Check attempts
     if (otpRequest.attemptsLeft <= 0) {
       throw new AppError("Maximum verification attempts exceeded", 429);
     }
 
-    // Verify code
     const isValid = verifyOtpCode(code, otpRequest.codeHash);
-
-    // Decrement attempts
     otpRequest.attemptsLeft -= 1;
     await otpRequest.save();
 
@@ -139,7 +153,6 @@ export class OtpService {
       );
     }
 
-    // Mark as used
     otpRequest.usedAt = new Date();
     await otpRequest.save();
 

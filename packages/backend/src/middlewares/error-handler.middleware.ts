@@ -1,5 +1,7 @@
+// packages/backend/src/middlewares/error-handler.middleware.ts
 import type { Request, Response, NextFunction } from "express";
 import { config } from "@configs";
+import { logger } from "@utils";
 
 export class AppError extends Error {
   constructor(
@@ -20,39 +22,29 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
-  console.error(`[${new Date().toISOString()}] Error:`, {
-    message: err.message,
-    url: req.url,
-    method: req.method,
-    stack: config.NODE_ENV === "development" ? err.stack : undefined,
-  });
+  logger.error(err.message, config.NODE_ENV === "development" ? err.stack : undefined);
 
   const statusCode = err instanceof AppError ? err.statusCode : 500;
-
   const response: {
-    code?: string;
-    message: string;
-    details?: unknown;
-    timestamp?: string;
-    path?: string;
-    stack?: string;
+    success: false;
+    data?: never;
+    error: { code?: string; message: string; details?: unknown };
+    meta?: { timestamp: string; path: string; stack?: string };
   } = {
-    message: err.message || "Internal Server Error",
+    success: false,
+    error: {
+      message: err.message || "Internal Server Error",
+      ...(err instanceof AppError && err.code && { code: err.code }),
+      ...(err instanceof AppError && err.details !== undefined && { details: err.details }),
+    },
   };
 
-  if (err instanceof AppError) {
-    if (err.code) {
-      response.code = err.code;
-    }
-    if (err.details) {
-      response.details = err.details;
-    }
-  }
-
   if (config.NODE_ENV === "development") {
-    response.timestamp = new Date().toISOString();
-    response.path = req.path;
-    response.stack = err.stack;
+    response.meta = {
+      timestamp: new Date().toISOString(),
+      path: req.path,
+      ...(err.stack && { stack: err.stack }),
+    };
   }
 
   res.status(statusCode).json(response);
