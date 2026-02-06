@@ -7,24 +7,35 @@
     "packages/*"
   ],
   "scripts": {
-    "prepare": "npx --yes husky install",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "npm run dev --workspace=@job-seeker/backend",
-    "dev:frontend": "npm run dev --workspace=@job-seeker/frontend",
-    "build": "npm run build --workspaces --if-present",
-    "build:backend": "npm run build --workspace=@job-seeker/backend",
-    "build:frontend": "npm run build --workspace=@job-seeker/frontend",
-    "lint": "npm run lint --workspaces --if-present",
-    "lint:backend": "npm run lint --workspace=@job-seeker/backend",
-    "lint:frontend": "npm run lint --workspace=@job-seeker/frontend",
-    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules"
+    "prepare": "husky install",
+    "dev": "concurrently \"yarn dev:backend\" \"yarn dev:frontend\"",
+    "dev:backend": "yarn workspace @job-seeker/backend dev",
+    "dev:frontend": "yarn workspace @job-seeker/frontend dev",
+    "build": "yarn workspaces foreach -A run build",
+    "build:backend": "yarn workspace @job-seeker/backend build",
+    "build:frontend": "yarn workspace @job-seeker/frontend build",
+    "lint": "yarn workspaces foreach -A run lint",
+    "lint:backend": "yarn workspace @job-seeker/backend lint",
+    "lint:frontend": "yarn workspace @job-seeker/frontend lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "clean": "yarn workspaces foreach -A run clean && rm -rf node_modules",
+    "outdated": "yarn outdated",
+    "audit": "yarn audit",
+    "audit:fix": "yarn audit --fix"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
     "concurrently": "^9.1.2",
-    "husky": "^9.1.7"
+    "eslint": "^9.39.2",
+    "husky": "^6.0.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  }
+    "yarn": ">=4.0.0"
+  },
+  "packageManager": "yarn@4.12.0"
 }

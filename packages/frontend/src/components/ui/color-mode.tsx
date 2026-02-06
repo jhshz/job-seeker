@@ -10,8 +10,11 @@ import { LuMoon, LuSun } from "react-icons/lu"
 export type ColorModeProviderProps = ThemeProviderProps
 
 export function ColorModeProvider(props: ColorModeProviderProps) {
+  const { children, ...rest } = props
   return (
-    <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
+    <ThemeProvider attribute="class" disableTransitionOnChange {...rest}>
+      {children}
+    </ThemeProvider>
   )
 }
 

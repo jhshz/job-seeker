@@ -3,7 +3,7 @@ import { AppError } from "./error-handler.middleware";
 
 export function notFound(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): void {
   const error = new AppError(`Cannot ${req.method} ${req.originalUrl}`, 404);

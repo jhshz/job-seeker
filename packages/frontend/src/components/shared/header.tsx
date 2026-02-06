@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import { Link } from "react-router";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import logo from "@/assets/images/logo.svg";
@@ -19,24 +19,26 @@ const Header = () => {
       <Flex maxW="6xl" mx="auto" align="center" justify="space-between" gap="4">
         <Link to="/">
           <Flex align="center" gap="2">
-            <Image
-              src={logo}
-              alt="لوگوی فرم رزومه"
-              boxSize="40px"
-              objectFit="cover"
-            />
-            <Text
-              as="span"
-              fontWeight="semibold"
-              fontSize="lg"
-              _hover={{ opacity: 0.85 }}
-            >
-              فرم رزومه
+            <Image src={logo} alt="لوگوی فرم رزومه" boxSize="40px" objectFit="cover" />
+            <Text as="span" fontWeight="semibold" fontSize="lg">
+              کارباما
             </Text>
           </Flex>
         </Link>
 
-        <ColorModeButton aria-label="تغییر حالت تاریک/روشن" />
+        <Flex align="center" gap="3">
+          <Link to="/auth/login">
+            <Button as="span" fontWeight="medium">
+              ورود
+            </Button>
+          </Link>
+          <Link to="/auth/register">
+            <Button as="span" fontWeight="medium" variant="outline">
+              ثبت‌نام
+            </Button>
+          </Link>
+          <ColorModeButton aria-label="تغییر حالت تاریک/روشن" />
+        </Flex>
       </Flex>
     </Box>
   );

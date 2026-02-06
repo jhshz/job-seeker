@@ -1,27 +1,21 @@
-import js from '@eslint/js'
-import tseslint from 'typescript-eslint'
+import baseConfig from "../../.eslintrc";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...baseConfig,
   {
-    files: ['**/*.ts'],
+    files: ["**/*.ts"],
     languageOptions: {
       parserOptions: {
         project: true,
       },
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-        },
-      ],
+      // Backend-specific rules can be added here
+      "no-console": "off", // Allow console in backend
     },
   },
   {
-    ignores: ['dist/**', 'node_modules/**', '**/*.js'],
-  },
-)
+    ignores: ["dist/**", "node_modules/**", "**/*.js"],
+  }
+);

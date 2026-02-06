@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import { Link } from "react-router";
+import { Box, Container, Heading, Text, VStack } from "@chakra-ui/react";
 
 const Home = () => {
   return (
@@ -20,15 +12,6 @@ const Home = () => {
             با چند قدم ساده اطلاعات و سوابق خود را وارد کنید و رزومه‌ی آماده‌ی
             ارسال داشته باشید.
           </Text>
-          <Button
-            asChild
-            size="lg"
-            colorPalette="blue"
-            fontWeight="semibold"
-            px="8"
-          >
-            <Link to="/form">شروع پر کردن فرم</Link>
-          </Button>
         </VStack>
       </Container>
     </Box>

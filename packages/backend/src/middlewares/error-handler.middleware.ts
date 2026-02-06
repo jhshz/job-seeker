@@ -6,6 +6,8 @@ export class AppError extends Error {
     message: string,
     public statusCode: number = 500,
     public isOperational: boolean = true,
+    public code?: string,
+    public details?: unknown,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -28,19 +30,28 @@ export function errorHandler(
   const statusCode = err instanceof AppError ? err.statusCode : 500;
 
   const response: {
-    success: boolean;
-    error: string;
-    timestamp: string;
-    path: string;
+    code?: string;
+    message: string;
+    details?: unknown;
+    timestamp?: string;
+    path?: string;
     stack?: string;
   } = {
-    success: false,
-    error: err.message || "Internal Server Error",
-    timestamp: new Date().toISOString(),
-    path: req.path,
+    message: err.message || "Internal Server Error",
   };
 
+  if (err instanceof AppError) {
+    if (err.code) {
+      response.code = err.code;
+    }
+    if (err.details) {
+      response.details = err.details;
+    }
+  }
+
   if (config.NODE_ENV === "development") {
+    response.timestamp = new Date().toISOString();
+    response.path = req.path;
     response.stack = err.stack;
   }
 

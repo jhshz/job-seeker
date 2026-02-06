@@ -8,10 +8,14 @@ import routes from "@routes";
 export function createApp(): Express {
   const app = express();
 
+  const corsOrigins = config.CORS_ORIGIN.split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+
   // Middlewares
   app.use(
     cors({
-      origin: config.CORS_ORIGIN,
+      origin: corsOrigins.length <= 1 ? corsOrigins[0] : corsOrigins,
       credentials: true,
     }),
   );
@@ -21,8 +25,13 @@ export function createApp(): Express {
   app.use(express.urlencoded({ extended: true }));
   app.use(logger);
 
+  // Ignore favicon requests
+  app.get("/favicon.ico", (_req, res) => {
+    res.status(204).end();
+  });
+
   // Routes
-  app.get("/", (req, res) => {
+  app.get("/", (_req, res) => {
     res.json({
       message: `Welcome to ${config.APP_NAME}`,
       status: "running",
