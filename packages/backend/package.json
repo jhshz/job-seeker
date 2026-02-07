@@ -12,7 +12,12 @@
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "prebuild": "yarn clean",
     "postbuild": "echo 'Build completed successfully!'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:migrate": "tsx -r tsconfig-paths/register src/db/migrate.ts",
+    "db:migrate:down": "tsx -r tsconfig-paths/register src/db/migrate.ts -- --steps=1",
+    "db:seed": "tsx -r tsconfig-paths/register src/db/seed.ts",
+    "db:seed:wipe": "tsx -r tsconfig-paths/register src/db/seed.ts -- --wipe",
+    "db:reset": "tsx -r tsconfig-paths/register src/db/seed.ts -- --reset"
   },
   "keywords": [],
   "author": "Javad Hashemzadeh",
@@ -54,6 +59,7 @@
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
   }
