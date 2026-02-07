@@ -1,6 +1,7 @@
 "use client";
 
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
+import { system } from "@/theme";
 import {
   ColorModeProvider,
   type ColorModeProviderProps,
@@ -10,7 +11,7 @@ import { Toaster } from "@/components/ui/toaster";
 export function ChakraProviderWrapper(props: ColorModeProviderProps) {
   const { children, ...rest } = props;
   return (
-    <ChakraProvider value={defaultSystem}>
+    <ChakraProvider value={system}>
       <ColorModeProvider {...rest}>
         <div dir="rtl" style={{ direction: "rtl" }}>
           {children}
