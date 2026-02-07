@@ -14,7 +14,7 @@ export function AppShell() {
         <Container maxW="container.xl">
           <Flex justify="space-between" align="center">
             <Link to="/" style={{ fontWeight: "bold", fontSize: "1.125rem" }}>
-              جاب‌سکر
+              جاب با ما
             </Link>
             <Flex gap="4" align="center">
               <Link to="/jobs">آگهی‌های شغلی</Link>

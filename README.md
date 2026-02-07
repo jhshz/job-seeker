@@ -1,11 +1,11 @@
-# Job Seeker - MERN Stack Monorepo
+# Jobbama | جاب با ما - MERN Stack Monorepo
 
-A full-stack job seeker application built with MongoDB, Express, React, and Node.js, organized as a monorepo with Yarn Workspaces.
+A full-stack Jobbama (جاب با ما) application built with MongoDB, Express, React, and Node.js, organized as a monorepo with Yarn Workspaces.
 
 ## 📁 Project Structure
 
 ```
-job-seeker/
+jobbama/
 ├── packages/
 │   ├── backend/          # Express.js + TypeScript backend API
 │   └── frontend/         # React + Vite frontend application
@@ -86,7 +86,7 @@ yarn lint:frontend
 
 ## 📦 Workspace Packages
 
-### @job-seeker/backend
+### @jobbama/backend
 
 Express.js backend API with TypeScript.
 
@@ -96,7 +96,7 @@ Express.js backend API with TypeScript.
   - `yarn build` - Compile TypeScript to JavaScript
   - `yarn start` - Run production server
   - `yarn lint` - Run ESLint
-### @job-seeker/frontend
+### @jobbama/frontend
 
 React frontend application with Vite and Chakra UI.
 

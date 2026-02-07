@@ -7,7 +7,7 @@ dotenv.config({ quiet: true });
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  APP_NAME: z.string().default("Job Seeker Backend"),
+  APP_NAME: z.string().default("Jobbama Backend"),
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   ACCESS_TOKEN_SECRET: z.string().min(1, "ACCESS_TOKEN_SECRET is required"),

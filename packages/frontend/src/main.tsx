@@ -7,11 +7,6 @@ import { ChakraProviderWrapper } from "@/providers/chakra-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import "./styles/fonts.css";
 
-if (typeof document !== "undefined") {
-  document.documentElement.setAttribute("dir", "rtl");
-  document.documentElement.setAttribute("lang", "fa");
-}
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ChakraProviderWrapper>

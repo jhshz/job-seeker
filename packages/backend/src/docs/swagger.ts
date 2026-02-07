@@ -5,9 +5,9 @@ import { config } from "@configs";
 const openApiSpec = {
   openapi: "3.0.3",
   info: {
-    title: "Job Seeker API",
+    title: "Jobbama API",
     version: "1.0.0",
-    description: "API for job seekers and recruiters to manage profiles, jobs, and applications.",
+    description: "Jobbama (جاب با ما) - API for job seekers and recruiters to manage profiles, jobs, and applications.",
   },
   servers: [
     { url: "http://localhost:" + config.PORT, description: "Local server" },
@@ -17,7 +17,7 @@ const openApiSpec = {
     { name: "Health", description: "Health check endpoints" },
     { name: "Jobs", description: "Job listings and applications" },
     { name: "Recruiters", description: "Recruiter profile and job management" },
-    { name: "Seekers", description: "Job seeker profile and applications" },
+    { name: "Seekers", description: "Job seeker profile and applications (Jobbama)" },
   ],
   paths: {
     "/api/health": {
