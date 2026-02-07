@@ -16,10 +16,16 @@ export function validateRequest(schema: {
         req.body = await schema.body.parseAsync(req.body);
       }
       if (schema.query) {
-        req.query = (await schema.query.parseAsync(req.query)) as Request["query"];
+        const parsed = (await schema.query.parseAsync(req.query)) as Request["query"];
+        const q = req.query as Record<string, unknown>;
+        Object.keys(q).forEach((k) => delete q[k]);
+        Object.assign(q, parsed);
       }
       if (schema.params) {
-        req.params = (await schema.params.parseAsync(req.params)) as Request["params"];
+        const parsed = (await schema.params.parseAsync(req.params)) as Request["params"];
+        const p = req.params as Record<string, string>;
+        Object.keys(p).forEach((k) => delete p[k]);
+        Object.assign(p, parsed);
       }
       next();
     } catch (error) {
