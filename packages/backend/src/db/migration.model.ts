@@ -16,7 +16,7 @@ const migrationSchema = new Schema<IMigrationRecord>(
   { timestamps: false },
 );
 
-migrationSchema.index({ name: 1 });
+// name already has unique: true above, which creates the index
 
 export const MigrationRecord: Model<IMigrationRecord> =
   mongoose.models.MigrationRecord ||

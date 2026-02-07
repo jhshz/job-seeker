@@ -3,6 +3,7 @@ export { Jobs } from "./public/jobs";
 export { JobDetails } from "./public/job-details";
 export { RecruiterPublic } from "./public/recruiter-public";
 export { Login } from "./auth/login";
+export { Register } from "./auth/register";
 export { OtpVerify } from "./auth/otp-verify";
 export { SeekerDashboard } from "./seeker/dashboard";
 export { SeekerProfile } from "./seeker/profile";

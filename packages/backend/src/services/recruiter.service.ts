@@ -4,6 +4,7 @@ import { RecruiterProfile, Job, JobApplication } from "@models";
 import { AppError } from "@middlewares";
 import type { UpdateRecruiterProfileInput, CreateJobInput, UpdateJobInput } from "@schemas";
 import { getPaginationQuery, getPaginationMeta } from "@utils";
+import { toJobResponse, type LeanJob } from "./job.service";
 
 export class RecruiterService {
   async getProfileByUserId(userId: string) {
@@ -52,7 +53,7 @@ export class RecruiterService {
   }
 
   async createJob(recruiterId: string, input: CreateJobInput) {
-    return Job.create({
+    const job = await Job.create({
       recruiterId: new mongoose.Types.ObjectId(recruiterId),
       title: input.title,
       description: input.description,
@@ -66,6 +67,7 @@ export class RecruiterService {
       showSalary: input.showSalary ?? false,
       tags: input.tags ?? [],
     });
+    return toJobResponse(job.toObject() as unknown as LeanJob);
   }
 
   async listRecruiterJobs(recruiterId: string, page: number, limit: number, status?: string) {
@@ -74,10 +76,11 @@ export class RecruiterService {
       recruiterId: new mongoose.Types.ObjectId(recruiterId),
     };
     if (status) filter.status = status;
-    const [list, total] = await Promise.all([
+    const [rawList, total] = await Promise.all([
       Job.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       Job.countDocuments(filter),
     ]);
+    const list = (rawList as unknown as LeanJob[]).map(toJobResponse);
     const meta = getPaginationMeta(page, limit, total);
     return { list, meta };
   }
@@ -90,7 +93,7 @@ export class RecruiterService {
     if (!job) throw new AppError("Job not found", 404, false, "JOB_NOT_FOUND");
     Object.assign(job, data);
     await job.save();
-    return job;
+    return toJobResponse(job.toObject() as unknown as LeanJob);
   }
 
   async getJobApplications(recruiterId: string, jobId: string, page: number, limit: number, status?: string) {

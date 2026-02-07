@@ -23,12 +23,14 @@ export function JobDetails() {
   const user = useAuthStore((s) => s.user);
   const isSeeker = user?.roles?.includes("seeker");
 
+  const validId = jobId && jobId !== "undefined" ? jobId : undefined;
   const { data: job, isLoading, error, refetch } = useQuery({
-    queryKey: queryKeys.jobs.detail(jobId ?? ""),
-    queryFn: () => getJobById(jobId!),
-    enabled: !!jobId,
+    queryKey: queryKeys.jobs.detail(validId ?? ""),
+    queryFn: () => getJobById(validId!),
+    enabled: !!validId,
   });
 
+  if (!validId) return <ErrorState message="آگهی یافت نشد" />;
   if (isLoading) return <Loading />;
   if (error || !job) return <ErrorState message="آگهی یافت نشد" onRetry={() => refetch()} />;
 

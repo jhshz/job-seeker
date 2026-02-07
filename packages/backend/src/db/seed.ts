@@ -81,7 +81,8 @@ async function main(): Promise<void> {
     await runSeed(opts);
     console.log("Seed completed.");
   } finally {
-    await disconnectDB();
+    void disconnectDB().catch(() => {});
+    process.exit(0);
   }
 }
 

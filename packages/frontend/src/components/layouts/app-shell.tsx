@@ -42,7 +42,10 @@ export function AppShell() {
                   </button>
                 </>
               ) : (
-                <Link to="/auth/login">ورود</Link>
+                <>
+                  <Link to="/auth/login">ورود</Link>
+                  <Link to="/auth/register">ثبت‌نام</Link>
+                </>
               )}
               <ColorModeButton />
             </Flex>

@@ -9,6 +9,7 @@ import {
   JobDetails,
   RecruiterPublic,
   Login,
+  Register,
   OtpVerify,
   SeekerDashboard,
   SeekerProfile,
@@ -41,7 +42,15 @@ export const router = createBrowserRouter([
             element: <Login />,
             handle: {
               title: "ورود",
-              description: "ورود یا ثبت‌نام در جاب‌سکر",
+              description: "ورود به جاب‌سکر",
+            },
+          },
+          {
+            path: "register",
+            element: <Register />,
+            handle: {
+              title: "ثبت‌نام",
+              description: "ثبت‌نام در جاب‌سکر",
             },
           },
           {
