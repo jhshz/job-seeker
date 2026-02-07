@@ -42,7 +42,6 @@ export const router = createBrowserRouter([
             element: <Login />,
             handle: {
               title: "ورود",
-              description: "ورود به جاب‌سکر",
             },
           },
           {
@@ -50,7 +49,6 @@ export const router = createBrowserRouter([
             element: <Register />,
             handle: {
               title: "ثبت‌نام",
-              description: "ثبت‌نام در جاب‌سکر",
             },
           },
           {

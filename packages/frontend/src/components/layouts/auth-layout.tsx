@@ -9,7 +9,7 @@ export function AuthLayout() {
 
   useEffect(() => {
     if (handle?.title) {
-      document.title = `${handle.title} | جاب‌سکر`;
+      document.title = `${handle.title} | جاب با ما`;
     }
   }, [handle?.title]);
 

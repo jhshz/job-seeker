@@ -10,7 +10,12 @@ type Form = z.infer<typeof otpVerifySchema>;
 
 export function OtpVerify() {
   const location = useLocation();
-  const state = location.state as { phoneE164?: string; purpose?: "login" | "register" } | null;
+  const state = location.state as {
+    phoneE164?: string;
+    purpose?: "login" | "register";
+    role?: "seeker" | "recruiter";
+    password?: string;
+  } | null;
   const verifyOtp = useVerifyOtp();
 
   const form = useForm<Form>({
@@ -19,11 +24,22 @@ export function OtpVerify() {
       phoneE164: state?.phoneE164 ?? "",
       purpose: state?.purpose ?? "login",
       code: "",
+      role: state?.role,
     },
   });
 
   const onSubmit = form.handleSubmit((data) => {
-    verifyOtp.mutate(data);
+    const payload =
+      data.purpose === "register"
+        ? {
+            phoneE164: data.phoneE164,
+            purpose: data.purpose,
+            code: data.code,
+            role: data.role,
+            password: state?.password,
+          }
+        : { phoneE164: data.phoneE164, purpose: data.purpose, code: data.code };
+    verifyOtp.mutate(payload);
   });
 
   return (

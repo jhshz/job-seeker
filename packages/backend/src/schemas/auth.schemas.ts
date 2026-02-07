@@ -16,6 +16,8 @@ export const otpVerifySchema = z.object({
     .string()
     .length(6, "OTP must be 6 digits")
     .regex(/^\d{6}$/, "OTP must contain only digits"),
+  /** Role for new user when purpose is "register" */
+  role: z.enum(["seeker", "recruiter"]).optional(),
 });
 
 export const passwordLoginSchema = z.object({

@@ -5,6 +5,7 @@ export const endpoints = {
     otpRequest: `${API_PREFIX}/auth/otp/request`,
     otpVerify: `${API_PREFIX}/auth/otp/verify`,
     login: `${API_PREFIX}/auth/login`,
+    setPassword: `${API_PREFIX}/auth/password/set`,
     refresh: `${API_PREFIX}/auth/refresh`,
     logout: `${API_PREFIX}/auth/logout`,
     me: `${API_PREFIX}/auth/me`,

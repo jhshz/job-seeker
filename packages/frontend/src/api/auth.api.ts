@@ -7,7 +7,13 @@ export type OtpPurpose = "login" | "register";
 export type OtpRequestPayload = { phoneE164: string; purpose: OtpPurpose };
 export type OtpRequestResponse = { requestId: string; message: string; expiresAt: string };
 
-export type OtpVerifyPayload = { phoneE164: string; purpose: OtpPurpose; code: string };
+export type OtpVerifyPayload = {
+  phoneE164: string;
+  purpose: OtpPurpose;
+  code: string;
+  /** Role for new user when purpose is "register" */
+  role?: "seeker" | "recruiter";
+};
 export type AuthPayload = { user: User; accessToken: string };
 
 export type PasswordLoginPayload = { phoneE164: string; password: string };
@@ -34,6 +40,10 @@ export async function loginPassword(payload: PasswordLoginPayload) {
     payload,
   );
   return data.data;
+}
+
+export async function setPassword(newPassword: string) {
+  await api.post(endpoints.auth.setPassword, { newPassword });
 }
 
 export async function logout() {

@@ -1,6 +1,9 @@
 import { User, type IUser } from "@models";
+import { UserRole } from "@enums";
 import { otpService } from "./otp.service";
 import { tokenService } from "./token.service";
+import { seekerService } from "./seeker.service";
+import { recruiterService } from "./recruiter.service";
 import { hashPassword, verifyPassword } from "@utils";
 import { AppError } from "@middlewares";
 
@@ -43,7 +46,8 @@ export class AuthService {
   }
 
   /**
-   * Verifies OTP by phoneE164 + purpose + code, then create/update user and return tokens
+   * Verifies OTP by phoneE164 + purpose + code, then create/update user and return tokens.
+   * For register purpose, optional role creates the user with that role and the corresponding profile.
    */
   async verifyOtpAndLogin(
     phoneE164: string,
@@ -51,12 +55,17 @@ export class AuthService {
     code: string,
     ip: string,
     userAgent: string,
+    role?: "seeker" | "recruiter",
   ) {
     const { phoneE164: verifiedPhone } = await otpService.verifyOtpByPhonePurposeCode(
       phoneE164,
       purpose as "login" | "register",
       code,
     );
+
+    const isRegister = purpose === "register";
+    const effectiveRole =
+      isRegister && role && (role === "seeker" || role === "recruiter") ? role : null;
 
     let user = await User.findOne({ phoneE164: verifiedPhone });
     if (!user) {
@@ -65,7 +74,13 @@ export class AuthService {
         isPhoneVerified: true,
         status: "active",
         passwordVersion: 0,
+        roles: effectiveRole ? [effectiveRole === "seeker" ? UserRole.SEEKER : UserRole.RECRUITER] : [],
       });
+      if (effectiveRole === "seeker") {
+        await seekerService.getOrCreateProfile(user._id.toString());
+      } else if (effectiveRole === "recruiter") {
+        await recruiterService.getOrCreateProfile(user._id.toString());
+      }
     } else {
       user.isPhoneVerified = true;
       user.lastLoginAt = new Date();
@@ -169,6 +184,7 @@ export class AuthService {
       phoneE164: user.phoneE164,
       isPhoneVerified: user.isPhoneVerified,
       status: user.status,
+      roles: user.roles,
       lastLoginAt: user.lastLoginAt,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,

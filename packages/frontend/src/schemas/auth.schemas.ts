@@ -28,6 +28,8 @@ export const otpVerifySchema = z.object({
     .string()
     .length(6, "کد تایید باید ۶ رقم باشد")
     .regex(/^\d{6}$/, "کد تایید باید فقط شامل اعداد باشد"),
+  /** Role for new user when purpose is "register" */
+  role: z.enum(["seeker", "recruiter"]).optional(),
 });
 
 export const passwordLoginSchema = z.object({
@@ -35,6 +37,25 @@ export const passwordLoginSchema = z.object({
   password: z.string().min(1, "رمز عبور الزامی است"),
 });
 
+const passwordFieldSchema = z
+  .string()
+  .min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد")
+  .max(128, "رمز عبور حداکثر ۱۲۸ کاراکتر");
+
+export const registerFormSchema = z
+  .object({
+    phoneE164: phoneSchema,
+    purpose: z.literal("register"),
+    role: z.enum(["seeker", "recruiter"], { message: "نقش را انتخاب کنید" }),
+    password: passwordFieldSchema,
+    confirmPassword: z.string().min(1, "تکرار رمز عبور الزامی است"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "رمز عبور و تکرار آن یکسان نیستند",
+    path: ["confirmPassword"],
+  });
+
 export type OtpRequestInput = z.infer<typeof otpRequestSchema>;
 export type OtpVerifyInput = z.infer<typeof otpVerifySchema>;
 export type PasswordLoginInput = z.infer<typeof passwordLoginSchema>;
+export type RegisterFormInput = z.infer<typeof registerFormSchema>;
