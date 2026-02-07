@@ -1,16 +1,25 @@
 import { RouterProvider } from "react-router/dom";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { router } from "./router";
+import { router } from "@/router";
+import { QueryProvider } from "@/providers/query-provider";
+import { ChakraProviderWrapper } from "@/providers/chakra-provider";
+import { AuthProvider } from "@/providers/auth-provider";
 import "./styles/fonts.css";
-import { UiProvider, QueryProvider } from "./providers";
+
+if (typeof document !== "undefined") {
+  document.documentElement.setAttribute("dir", "rtl");
+  document.documentElement.setAttribute("lang", "fa");
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <UiProvider>
+    <ChakraProviderWrapper>
       <QueryProvider>
-        <RouterProvider router={router} />,
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </QueryProvider>
-    </UiProvider>
-  </StrictMode>
+    </ChakraProviderWrapper>
+  </StrictMode>,
 );

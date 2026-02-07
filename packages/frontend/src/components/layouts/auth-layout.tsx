@@ -1,40 +1,33 @@
-import { Center, Heading, Stack, Text } from "@chakra-ui/react";
-import { Link, Outlet, useMatches } from "react-router";
+import { Outlet, useMatches } from "react-router";
+import { Box, Container, Heading, Text } from "@chakra-ui/react";
+import { useEffect } from "react";
 
-type AuthMeta = {
-  title: string;
-  description: string;
-  link: string;
-  linkText: string;
-};
-
-const AuthLayout = () => {
+export function AuthLayout() {
   const matches = useMatches();
-  const current = matches[matches.length - 1];
-  const meta = current?.handle as Partial<AuthMeta> | undefined;
+  const match = matches.find((m) => (m.handle as { title?: string })?.title);
+  const handle = match?.handle as { title?: string; description?: string };
 
-  // safe defaults (optional)
-  const title = meta?.title ?? "";
-  const description = meta?.description ?? "";
-  const link = meta?.link ?? "/auth/login";
-  const linkText = meta?.linkText ?? "";
+  useEffect(() => {
+    if (handle?.title) {
+      document.title = `${handle.title} | جاب‌سکر`;
+    }
+  }, [handle?.title]);
 
   return (
-    <Center minH="100dvh" px="4">
-      <Stack gap="6" w="full" maxW="md">
-        {/* header */}
-        <Stack gap="1" textAlign="center">
-          <Heading size="xl">{title}</Heading>
-        </Stack>
-
+    <Container maxW="md" py="8">
+      <Box>
+        {handle?.title && (
+          <Heading size="lg" mb="2">
+            {handle.title}
+          </Heading>
+        )}
+        {handle?.description && (
+          <Text color="fg.muted" mb="6">
+            {handle.description}
+          </Text>
+        )}
         <Outlet />
-
-        <Text color="fg.muted" textAlign="center">
-          {description} <Link to={link}>{linkText}</Link>
-        </Text>
-      </Stack>
-    </Center>
+      </Box>
+    </Container>
   );
-};
-
-export default AuthLayout;
+}

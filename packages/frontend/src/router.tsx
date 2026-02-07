@@ -1,13 +1,37 @@
-import { createBrowserRouter } from "react-router";
-import { Home, Login, Register } from "@/pages";
-import { AuthLayout, RootLayout } from "@/components/layouts";
+import { createBrowserRouter, Navigate, Outlet } from "react-router";
+import { AppShell } from "@/components/layouts/app-shell";
+import { AuthLayout } from "@/components/layouts/auth-layout";
+import { ProtectedRoute } from "@/components/layouts/protected-route";
+import { RoleRoute } from "@/components/layouts/role-route";
+import {
+  Home,
+  Jobs,
+  JobDetails,
+  RecruiterPublic,
+  Login,
+  OtpVerify,
+  SeekerDashboard,
+  SeekerProfile,
+  SeekerApplications,
+  SeekerResumes,
+  ResumeWizard,
+  RecruiterDashboard,
+  RecruiterProfile,
+  RecruiterJobs,
+  CreateJob,
+  EditJob,
+  JobApplications,
+} from "@/pages";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
+    element: <AppShell />,
     children: [
       { index: true, element: <Home /> },
+      { path: "jobs", element: <Jobs /> },
+      { path: "jobs/:jobId", element: <JobDetails /> },
+      { path: "recruiters/:recruiterId", element: <RecruiterPublic /> },
       {
         path: "auth",
         element: <AuthLayout />,
@@ -16,22 +40,58 @@ export const router = createBrowserRouter([
             path: "login",
             element: <Login />,
             handle: {
-              title: "ورود به حساب کاربری",
-              description: "حساب ندارید؟",
-              link: "/auth/register",
-              linkText: "ثبت‌نام کنید",
+              title: "ورود",
+              description: "ورود یا ثبت‌نام در جاب‌سکر",
             },
           },
           {
-            path: "register",
-            element: <Register />,
+            path: "otp-verify",
+            element: <OtpVerify />,
             handle: {
-              title: "ثبت‌نام",
-              description: "قبلاً حساب دارید؟",
-              link: "/auth/login",
-              linkText: "وارد شوید",
+              title: "تایید کد",
+              description: "کد ارسال شده را وارد کنید",
             },
           },
+        ],
+      },
+      {
+        path: "seeker",
+        element: (
+          <ProtectedRoute>
+            <RoleRoute role="seeker">
+              <Outlet />
+            </RoleRoute>
+          </ProtectedRoute>
+        ),
+        children: [
+          { index: true, element: <Navigate to="/seeker/dashboard" replace /> },
+          { path: "dashboard", element: <SeekerDashboard /> },
+          { path: "profile", element: <SeekerProfile /> },
+          { path: "applications", element: <SeekerApplications /> },
+          { path: "resumes", element: <SeekerResumes /> },
+          { path: "resume-wizard", element: <ResumeWizard /> },
+        ],
+      },
+      {
+        path: "recruiter",
+        element: (
+          <ProtectedRoute>
+            <RoleRoute role="recruiter">
+              <Outlet />
+            </RoleRoute>
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/recruiter/dashboard" replace />,
+          },
+          { path: "dashboard", element: <RecruiterDashboard /> },
+          { path: "profile", element: <RecruiterProfile /> },
+          { path: "jobs", element: <RecruiterJobs /> },
+          { path: "jobs/create", element: <CreateJob /> },
+          { path: "jobs/:jobId/edit", element: <EditJob /> },
+          { path: "jobs/:jobId/applications", element: <JobApplications /> },
         ],
       },
     ],

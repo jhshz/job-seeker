@@ -1,21 +1,18 @@
-import { Box, Container, Heading, Text, VStack } from "@chakra-ui/react";
+import { Link } from "react-router";
+import { Container, Heading, Text } from "@chakra-ui/react";
 
-const Home = () => {
+export function Home() {
   return (
-    <Box as="main" flex="1" py="12" px="4">
-      <Container maxW="2xl">
-        <VStack gap="8" textAlign="center" py="8">
-          <Heading size="2xl" fontWeight="bold" color="fg">
-            رزومه‌ی حرفه‌ای خود را بسازید
-          </Heading>
-          <Text fontSize="lg" color="fg.muted" lineHeight="tall" maxW="md">
-            با چند قدم ساده اطلاعات و سوابق خود را وارد کنید و رزومه‌ی آماده‌ی
-            ارسال داشته باشید.
-          </Text>
-        </VStack>
-      </Container>
-    </Box>
+    <Container maxW="container.xl" py="12">
+      <Heading size="xl" mb="4">
+        جاب‌سکر
+      </Heading>
+      <Text color="fg.muted" mb="6">
+        پلتفرم جستجوی شغل و استخدام
+      </Text>
+      <Link to="/jobs" style={{ color: "var(--chakra-colors-blue-500)" }}>
+        مشاهده آگهی‌های شغلی
+      </Link>
+    </Container>
   );
-};
-
-export default Home;
+}

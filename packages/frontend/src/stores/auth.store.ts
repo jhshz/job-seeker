@@ -1,46 +1,20 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-
-export type AuthUser = {
-  id: string;
-  phoneE164: string;
-  isPhoneVerified: boolean;
-  status: string;
-};
-
-export type AuthTokens = {
-  accessToken: string;
-  refreshToken: string;
-};
-
-export type AuthResponse = {
-  user: AuthUser;
-  tokens: AuthTokens;
-};
+import type { User } from "@/api/types";
 
 type AuthState = {
-  user: AuthUser | null;
-  tokens: AuthTokens | null;
-  setAuth: (payload: AuthResponse) => void;
+  user: User | null;
+  accessToken: string | null;
+  setAuth: (user: User, accessToken: string) => void;
+  setAccessToken: (token: string) => void;
+  setUser: (user: User) => void;
   clearAuth: () => void;
 };
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      tokens: null,
-      setAuth: (payload) => {
-        set({ user: payload.user, tokens: payload.tokens });
-      },
-      clearAuth: () => {
-        set({ user: null, tokens: null });
-      },
-    }),
-    {
-      name: "job-seeker-auth",
-      partialize: (state) => ({ user: state.user, tokens: state.tokens }),
-    },
-  ),
-);
-
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  accessToken: null,
+  setAuth: (user, accessToken) => set({ user, accessToken }),
+  setAccessToken: (accessToken) => set({ accessToken }),
+  setUser: (user) => set({ user }),
+  clearAuth: () => set({ user: null, accessToken: null }),
+}));

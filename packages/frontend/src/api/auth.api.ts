@@ -1,50 +1,46 @@
-import { http } from "@/lib/http";
-import type { AuthResponse } from "@/stores/auth.store";
+import { api } from "./axios";
+import { endpoints } from "./endpoints";
+import type { User } from "./types";
 
 export type OtpPurpose = "login" | "register";
 
-export type OtpRequestPayload = {
-  phone: string;
-  purpose: OtpPurpose;
-};
+export type OtpRequestPayload = { phoneE164: string; purpose: OtpPurpose };
+export type OtpRequestResponse = { requestId: string; message: string; expiresAt: string };
 
-export type OtpRequestResponse = {
-  requestId: string;
-  message: string;
-  expiresAt: string;
-};
+export type OtpVerifyPayload = { phoneE164: string; purpose: OtpPurpose; code: string };
+export type AuthPayload = { user: User; accessToken: string };
+
+export type PasswordLoginPayload = { phoneE164: string; password: string };
 
 export async function requestOtp(payload: OtpRequestPayload) {
-  const { data } = await http.post<OtpRequestResponse>("/auth/otp/request", payload);
-  return data;
+  const { data } = await api.post<{ success: boolean; data: OtpRequestResponse }>(
+    endpoints.auth.otpRequest,
+    payload,
+  );
+  return data.data;
 }
-
-export type OtpVerifyPayload = {
-  requestId: string;
-  code: string;
-};
 
 export async function verifyOtp(payload: OtpVerifyPayload) {
-  const { data } = await http.post<AuthResponse>("/auth/otp/verify", payload);
-  return data;
+  const { data } = await api.post<{ success: boolean; data: AuthPayload }>(
+    endpoints.auth.otpVerify,
+    payload,
+  );
+  return data.data;
 }
 
-export type PasswordLoginPayload = {
-  phone: string;
-  password: string;
-};
-
-export async function passwordLogin(payload: PasswordLoginPayload) {
-  const { data } = await http.post<AuthResponse>("/auth/password/login", payload);
-  return data;
+export async function loginPassword(payload: PasswordLoginPayload) {
+  const { data } = await api.post<{ success: boolean; data: AuthPayload }>(
+    endpoints.auth.login,
+    payload,
+  );
+  return data.data;
 }
 
-export type SetPasswordPayload = {
-  newPassword: string;
-};
-
-export async function setPassword(payload: SetPasswordPayload) {
-  const { data } = await http.post<{ message: string }>("/auth/password/set", payload);
-  return data;
+export async function logout() {
+  await api.post(endpoints.auth.logout, {});
 }
 
+export async function getMe(): Promise<User & { seekerProfile?: unknown; recruiterProfile?: unknown }> {
+  const { data } = await api.get<{ success: boolean; data: User }>(endpoints.auth.me);
+  return data.data;
+}
