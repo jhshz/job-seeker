@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Box,
   Button,
   Field,
   Group,
@@ -12,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerFormSchema } from "@/schemas/auth.schemas";
 import type { RegisterFormInput } from "@/schemas/auth.schemas";
 import { useRequestOtp } from "@/hooks/use-auth";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link as RouterLink } from "react-router";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 
 export function Register() {
@@ -51,8 +52,8 @@ export function Register() {
   });
 
   return (
-    <Stack gap="6">
-      <form onSubmit={onSubmit}>
+    <Box display="flex" flexDirection="column" alignItems="center">
+      <Stack gap="6" w="full" maxW="sm" as="form" onSubmit={onSubmit}>
         <Stack gap="4">
           <Field.Root invalid={!!form.formState.errors.role}>
             <Field.Label>نقش</Field.Label>
@@ -148,15 +149,17 @@ export function Register() {
               {form.formState.errors.confirmPassword?.message}
             </Field.ErrorText>
           </Field.Root>
-          <Button type="submit" loading={requestOtp.isPending}>
+          <Button type="submit" loading={requestOtp.isPending} w="full">
             دریافت کد تایید
           </Button>
         </Stack>
-      </form>
-      <Stack direction="row" justify="center" gap="2">
-        <span>قبلاً ثبت‌نام کرده‌اید؟</span>
-        <Link to="/auth/login">ورود</Link>
+        <Box display="flex" alignItems="center" justifyContent="center" gap="2">
+          <span>قبلاً ثبت‌نام کرده‌اید؟</span>
+          <Button asChild variant="ghost" colorPalette="green">
+            <RouterLink to="/auth/login">ورود</RouterLink>
+          </Button>
+        </Box>
       </Stack>
-    </Stack>
+    </Box>
   );
 }

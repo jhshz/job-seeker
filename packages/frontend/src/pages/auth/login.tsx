@@ -1,10 +1,10 @@
-import { Button, Field, Input, Stack, Tabs } from "@chakra-ui/react";
+import { Box, Button, Field, Input, Stack, Tabs } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { otpRequestSchema, passwordLoginSchema } from "@/schemas/auth.schemas";
 import type { z } from "zod";
 import { useRequestOtp, useLoginPassword } from "@/hooks/use-auth";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link as RouterLink } from "react-router";
 
 type OtpForm = z.infer<typeof otpRequestSchema>;
 type PasswordForm = z.infer<typeof passwordLoginSchema>;
@@ -39,8 +39,9 @@ export function Login() {
   });
 
   return (
-    <Stack gap="6">
-      <Tabs.Root defaultValue="otp" variant="enclosed" fitted>
+    <Box display="flex" flexDirection="column" alignItems="center">
+      <Stack gap="6" w="full" maxW="sm">
+        <Tabs.Root defaultValue="otp" variant="enclosed" fitted>
         <Tabs.List>
           <Tabs.Trigger value="otp">ورود با کد تایید</Tabs.Trigger>
           <Tabs.Trigger value="password">ورود با رمز عبور</Tabs.Trigger>
@@ -59,7 +60,7 @@ export function Login() {
                   {otpForm.formState.errors.phoneE164?.message}
                 </Field.ErrorText>
               </Field.Root>
-              <Button type="submit" loading={requestOtp.isPending}>
+              <Button type="submit" loading={requestOtp.isPending} w="full">
                 دریافت کد تایید
               </Button>
             </Stack>
@@ -90,17 +91,20 @@ export function Login() {
                   {passwordForm.formState.errors.password?.message}
                 </Field.ErrorText>
               </Field.Root>
-              <Button type="submit" loading={loginPassword.isPending}>
+              <Button type="submit" loading={loginPassword.isPending} w="full">
                 ورود
               </Button>
             </Stack>
           </form>
         </Tabs.Content>
-      </Tabs.Root>
-      <Stack direction="row" justify="center" gap="2">
-        <span>حساب کاربری ندارید؟</span>
-        <Link to="/auth/register">ثبت‌نام</Link>
+        </Tabs.Root>
+        <Box display="flex" alignItems="center" justifyContent="center" gap="2">
+          <span>حساب کاربری ندارید؟</span>
+          <Button asChild variant="ghost" colorPalette="green">
+            <RouterLink to="/auth/register">ثبت‌نام</RouterLink>
+          </Button>
+        </Box>
       </Stack>
-    </Stack>
+    </Box>
   );
 }
