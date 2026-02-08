@@ -14,12 +14,12 @@ export class SeekerService {
     return profile;
   }
 
-  async getOrCreateProfile(userId: string) {
+  async getOrCreateProfile(userId: string, initialData?: { fullName?: string }) {
     let profile = await SeekerProfile.findOne({ userId: new mongoose.Types.ObjectId(userId) });
     if (!profile) {
       profile = await SeekerProfile.create({
         userId: new mongoose.Types.ObjectId(userId),
-        fullName: "",
+        fullName: (initialData?.fullName?.trim()?.length ? initialData.fullName.trim() : "") as string,
         headline: "",
         location: "",
         about: "",

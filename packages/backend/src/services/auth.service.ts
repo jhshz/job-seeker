@@ -56,6 +56,7 @@ export class AuthService {
     ip: string,
     userAgent: string,
     role?: "seeker" | "recruiter",
+    fullName?: string,
   ) {
     const { phoneE164: verifiedPhone } = await otpService.verifyOtpByPhonePurposeCode(
       phoneE164,
@@ -77,7 +78,9 @@ export class AuthService {
         roles: effectiveRole ? [effectiveRole === "seeker" ? UserRole.SEEKER : UserRole.RECRUITER] : [],
       });
       if (effectiveRole === "seeker") {
-        await seekerService.getOrCreateProfile(user._id.toString());
+        await seekerService.getOrCreateProfile(user._id.toString(), {
+          fullName: fullName?.trim() || "",
+        });
       } else if (effectiveRole === "recruiter") {
         await recruiterService.getOrCreateProfile(user._id.toString());
       }

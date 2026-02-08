@@ -26,9 +26,13 @@ export function Login() {
 
   const onOtpSubmit = otpForm.handleSubmit((data) => {
     requestOtp.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (res) => {
         navigate("/auth/otp-verify", {
-          state: { phoneE164: data.phoneE164, purpose: data.purpose },
+          state: {
+            phoneE164: data.phoneE164,
+            purpose: data.purpose,
+            expiresAt: res.expiresAt,
+          },
         });
       },
     });

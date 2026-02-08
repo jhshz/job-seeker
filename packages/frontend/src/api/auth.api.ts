@@ -13,6 +13,8 @@ export type OtpVerifyPayload = {
   code: string;
   /** Role for new user when purpose is "register" */
   role?: "seeker" | "recruiter";
+  /** Full name for seeker when purpose is "register" and role is "seeker" */
+  fullName?: string;
 };
 export type AuthPayload = { user: User; accessToken: string };
 

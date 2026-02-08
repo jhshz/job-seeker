@@ -15,6 +15,7 @@ import type { RegisterFormInput } from "@/schemas/auth.schemas";
 import { useRequestOtp } from "@/hooks/use-auth";
 import { useNavigate, Link as RouterLink } from "react-router";
 import { LuEye, LuEyeOff } from "react-icons/lu";
+import { PasswordStrength } from "@/components/auth/password-strength";
 
 export function Register() {
   const navigate = useNavigate();
@@ -28,22 +29,28 @@ export function Register() {
       phoneE164: "",
       purpose: "register",
       role: "seeker",
+      fullName: "",
       password: "",
       confirmPassword: "",
     },
   });
 
+  const role = form.watch("role");
+  const isSeeker = role === "seeker";
+
   const onSubmit = form.handleSubmit((data) => {
     requestOtp.mutate(
       { phoneE164: data.phoneE164, purpose: "register" },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
           navigate("/auth/otp-verify", {
             state: {
               phoneE164: data.phoneE164,
               purpose: "register" as const,
               role: data.role,
+              fullName: data.fullName,
               password: data.password,
+              expiresAt: res.expiresAt,
             },
           });
         },
@@ -92,6 +99,18 @@ export function Register() {
               {form.formState.errors.role?.message}
             </Field.ErrorText>
           </Field.Root>
+          {isSeeker && (
+            <Field.Root invalid={!!form.formState.errors.fullName}>
+              <Field.Label>نام و نام خانوادگی</Field.Label>
+              <Input
+                {...form.register("fullName")}
+                placeholder="نام و نام خانوادگی خود را وارد کنید"
+              />
+              <Field.ErrorText>
+                {form.formState.errors.fullName?.message}
+              </Field.ErrorText>
+            </Field.Root>
+          )}
           <Field.Root invalid={!!form.formState.errors.phoneE164}>
             <Field.Label>شماره موبایل</Field.Label>
             <Input
@@ -110,7 +129,7 @@ export function Register() {
                 flex="1"
                 {...form.register("password")}
                 type={showPassword ? "text" : "password"}
-                placeholder="حداقل ۸ کاراکتر"
+                placeholder="حداقل ۸ کاراکتر، حرف، عدد و کاراکتر خاص"
               />
               <Button
                 type="button"
@@ -122,6 +141,7 @@ export function Register() {
                 {showPassword ? <LuEyeOff /> : <LuEye />}
               </Button>
             </Group>
+            <PasswordStrength password={form.watch("password") ?? ""} />
             <Field.ErrorText>
               {form.formState.errors.password?.message}
             </Field.ErrorText>

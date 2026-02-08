@@ -40,15 +40,23 @@ export const passwordLoginSchema = z.object({
 const passwordFieldSchema = z
   .string()
   .min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد")
-  .max(128, "رمز عبور حداکثر ۱۲۸ کاراکتر");
+  .max(128, "رمز عبور حداکثر ۱۲۸ کاراکتر")
+  .regex(/[a-zA-Z]/, "رمز عبور باید حداقل یک حرف انگلیسی داشته باشد")
+  .regex(/\d/, "رمز عبور باید حداقل یک عدد داشته باشد")
+  .regex(/[^a-zA-Z0-9]/, "رمز عبور باید حداقل یک کاراکتر خاص (مثل !@#$%) داشته باشد");
 
 export const registerFormSchema = z
   .object({
     phoneE164: phoneSchema,
     purpose: z.literal("register"),
     role: z.enum(["seeker", "recruiter"], { message: "نقش را انتخاب کنید" }),
+    fullName: z.string().max(200).optional(),
     password: passwordFieldSchema,
     confirmPassword: z.string().min(1, "تکرار رمز عبور الزامی است"),
+  })
+  .refine((data) => data.role !== "seeker" || (data.fullName?.trim()?.length ?? 0) > 0, {
+    message: "نام و نام خانوادگی الزامی است",
+    path: ["fullName"],
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "رمز عبور و تکرار آن یکسان نیستند",

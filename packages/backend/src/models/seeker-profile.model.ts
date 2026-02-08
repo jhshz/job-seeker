@@ -70,7 +70,7 @@ const seekerProfileSchema = new Schema<ISeekerProfile>(
       required: true,
       unique: true,
     },
-    fullName: { type: String, required: true, trim: true },
+    fullName: { type: String, required: true, trim: true, default: "" },
     headline: { type: String, default: "", trim: true },
     location: { type: String, default: "", trim: true },
     about: { type: String, default: "" },
