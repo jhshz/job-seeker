@@ -1,10 +1,9 @@
 import { Outlet, Link, useLocation } from "react-router";
-import { Box, Container, Flex, Text, Badge } from "@chakra-ui/react";
+import { Box, Container, Flex, Text } from "@chakra-ui/react";
 import {
   HiOutlineChartBar,
   HiOutlineBriefcase,
   HiOutlinePlus,
-  HiOutlineClipboard,
   HiOutlineUser,
 } from "react-icons/hi2";
 import type { IconType } from "react-icons";
@@ -13,11 +12,6 @@ const navItems: { to: string; label: string; Icon: IconType }[] = [
   { to: "/recruiter/dashboard", label: "داشبورد", Icon: HiOutlineChartBar },
   { to: "/recruiter/jobs", label: "آگهی‌های من", Icon: HiOutlineBriefcase },
   { to: "/recruiter/jobs/create", label: "ایجاد آگهی", Icon: HiOutlinePlus },
-  {
-    to: "/recruiter/applications",
-    label: "درخواست‌ها",
-    Icon: HiOutlineClipboard,
-  },
   { to: "/recruiter/profile", label: "پروفایل", Icon: HiOutlineUser },
 ];
 
@@ -39,7 +33,7 @@ function NavItem({
         gap="3"
         px="4"
         py="3"
-        borderRadius="lg"
+        borderRadius="md"
         bg={isActive ? "brand.subtle" : "transparent"}
         color={isActive ? "brand.fg" : "fg.muted"}
         fontWeight={isActive ? "semibold" : "medium"}
@@ -87,7 +81,7 @@ export function RecruiterLayout() {
           w={{ base: "100%", lg: "240px" }}
           borderWidth="1px"
           borderColor="border"
-          borderRadius="xl"
+          borderRadius="md"
           bg="bg.panel"
           p="2"
           alignSelf={{ base: "stretch", lg: "flex-start" }}

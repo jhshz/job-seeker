@@ -32,7 +32,7 @@ export function RecruiterJobs() {
         <Box
           p="12"
           textAlign="center"
-          borderRadius="xl"
+          borderRadius="md"
           borderWidth="1px"
           borderColor="border"
           bg="bg.muted"
@@ -45,10 +45,10 @@ export function RecruiterJobs() {
           </Link>
         </Box>
       ) : (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap="4">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap="5">
           {jobs.map((job) => (
             <Box key={job.id}>
-              <JobCard job={job} />
+              <JobCard job={job} showStatus />
               <Flex gap="2" mt="2" flexWrap="wrap">
                 <Link to={`/recruiter/jobs/${job.id}/edit`}>
                   <Button size="xs" variant="outline">

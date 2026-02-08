@@ -102,8 +102,8 @@ export function Home() {
           {features.map((item) => (
             <Box
               key={item.title}
-              p="6"
-              rounded="lg"
+              p="5"
+              borderRadius="md"
               bg="bg.panel"
               borderWidth="1px"
               borderColor="border"

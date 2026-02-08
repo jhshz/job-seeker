@@ -35,17 +35,13 @@ function QuickActionCard({
   return (
     <Link to={to} style={{ textDecoration: "none" }}>
       <Box
-        p="6"
-        borderRadius="xl"
+        p="5"
+        borderRadius="md"
         borderWidth="1px"
         borderColor="border"
         bg="bg.panel"
-        _hover={{
-          borderColor: "brand.solid",
-          shadow: "lg",
-          transform: "translateY(-2px)",
-        }}
-        transition="all 0.2s"
+        transition="border-color 0.15s"
+        _hover={{ borderColor: "border.emphasized" }}
       >
         <Flex mb="3" color="brand.fg" aria-hidden>
           <Icon size={28} />
@@ -91,10 +87,10 @@ export function RecruiterDashboard() {
       <SimpleGrid columns={{ base: 1, sm: 2 }} gap="4" mb="8">
         <Box
           p="4"
-          borderRadius="lg"
+          borderRadius="md"
           bg="brand.subtle"
           borderWidth="1px"
-          borderColor="brand.muted"
+          borderColor="border"
         >
           <Text fontSize="sm" color="fg.muted" mb="1">
             تعداد آگهی‌ها
@@ -105,10 +101,10 @@ export function RecruiterDashboard() {
         </Box>
         <Box
           p="4"
-          borderRadius="lg"
+          borderRadius="md"
           bg="green.subtle"
           borderWidth="1px"
-          borderColor="green.muted"
+          borderColor="border"
         >
           <Text fontSize="sm" color="fg.muted" mb="1">
             آگهی‌های فعال
@@ -136,9 +132,9 @@ export function RecruiterDashboard() {
           Icon={HiOutlinePlus}
         />
         <QuickActionCard
-          to="/recruiter/applications"
+          to="/recruiter/jobs"
           title="درخواست‌ها"
-          description="مشاهده درخواست‌های دریافتی"
+          description="مشاهده درخواست‌های دریافتی از آگهی‌ها"
           Icon={HiOutlineClipboard}
         />
         <QuickActionCard

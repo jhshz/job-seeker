@@ -34,8 +34,11 @@ export async function getRecruiterPublic(recruiterId: string) {
 }
 
 export async function listRecruiterJobs() {
+  // Note: When used as React Query queryFn, it receives QueryFunctionContext as first arg - we ignore it
+  // and only send valid API params to avoid 400 from backend validation
   const { data } = await api.get<{ success: boolean; data: Job[] }>(
     endpoints.recruiters.jobs,
+    { params: { limit: 100 } },
   );
   return data.data;
 }
@@ -84,6 +87,8 @@ export async function getJobApplications(
     success: boolean;
     data: JobApplication[];
     meta?: unknown;
-  }>(endpoints.recruiters.jobApplications(jobId), { params });
+  }>(endpoints.recruiters.jobApplications(jobId), {
+    params: { limit: 100, ...params },
+  });
   return { applications: data.data, meta: data.meta };
 }

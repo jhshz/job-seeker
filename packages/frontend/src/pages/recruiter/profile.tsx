@@ -125,8 +125,8 @@ export function RecruiterProfile() {
       </Heading>
 
       <Box
-        p="6"
-        borderRadius="xl"
+        p="5"
+        borderRadius="md"
         borderWidth="1px"
         borderColor="border"
         bg="bg.panel"
@@ -208,8 +208,8 @@ export function RecruiterProfile() {
       <Separator mb="6" />
 
       <Box
-        p="6"
-        borderRadius="xl"
+        p="5"
+        borderRadius="md"
         borderWidth="1px"
         borderColor="border"
         bg="bg.panel"

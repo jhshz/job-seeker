@@ -23,12 +23,7 @@ router.patch(
   recruiterController.updateMe,
 );
 
-router.get(
-  "/:recruiterId",
-  validateRequest({ params: recruiterIdParamSchema }),
-  jobController.getRecruiterPublic,
-);
-
+// Jobs routes MUST come before /:recruiterId - otherwise "jobs" matches as recruiterId
 router.post(
   "/jobs",
   requireAuth,
@@ -50,6 +45,12 @@ router.get(
   requireRole("recruiter"),
   validateRequest({ params: recruiterJobIdParamSchema, query: listApplicationsQuerySchema }),
   recruiterController.getJobApplications,
+);
+
+router.get(
+  "/:recruiterId",
+  validateRequest({ params: recruiterIdParamSchema }),
+  jobController.getRecruiterPublic,
 );
 
 export default router;

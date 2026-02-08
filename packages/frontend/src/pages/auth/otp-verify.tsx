@@ -141,7 +141,7 @@ export function OtpVerify() {
           <Box
             py="3"
             px="4"
-            borderRadius="lg"
+            borderRadius="md"
             bg={isExpired ? "red.subtle" : "bg.subtle"}
             borderWidth="1px"
             borderColor={isExpired ? "red.200" : "border"}
