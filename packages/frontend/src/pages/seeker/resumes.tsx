@@ -11,6 +11,7 @@ import {
   EmptyState,
   Dialog,
   HStack,
+  Switch,
 } from "@chakra-ui/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMyResumes, activateResume, deleteResume } from "@/api/seekers.api";
@@ -134,12 +135,12 @@ export function SeekerResumes() {
                 _hover={{ borderColor: "border.emphasized" }}
                 transition="border-color 0.15s"
               >
-                <Flex mb="3" color="brand.fg" aria-hidden>
+                <Flex mb="3" color="brand.fg" aria-hidden gap="2">
                   <HiOutlineDocumentText size={28} />
+                  <Text fontWeight="semibold" mb="1">
+                    {r.title?.trim() || "رزومه بدون عنوان"}
+                  </Text>
                 </Flex>
-                <Text fontWeight="semibold" mb="1">
-                  {r.title?.trim() || "رزومه بدون عنوان"}
-                </Text>
                 <Text fontSize="sm" color="fg.muted" mb="3">
                   {new Intl.DateTimeFormat("fa-IR", {
                     calendar: "persian",
@@ -147,21 +148,25 @@ export function SeekerResumes() {
                   }).format(new Date(r.createdAt))}
                 </Text>
                 <Flex gap="2" align="center" flexWrap="wrap">
-                  {r.isActive && (
+                  {r.isActive ? (
                     <Badge colorPalette="green" size="lg" variant="subtle">
                       فعال
                     </Badge>
-                  )}
-                  {!r.isActive && (
-                    <Button
-                      size="xs"
-                      variant="outline"
-                      colorPalette="brand"
-                      onClick={() => activateMutation.mutate(resumeId)}
-                      loading={activateMutation.isPending}
+                  ) : (
+                    <Switch.Root
+                      size="sm"
+                      colorPalette="green"
+                      checked={false}
+                      disabled={activateMutation.isPending}
+                      onCheckedChange={(details) => {
+                        if (details.checked) activateMutation.mutate(resumeId);
+                      }}
+                      label="فعال‌سازی رزومه"
                     >
-                      فعال‌سازی
-                    </Button>
+                      <Switch.HiddenInput />
+                      <Switch.Control />
+                      <Switch.Label>فعال‌سازی</Switch.Label>
+                    </Switch.Root>
                   )}
                   <Link to={`/seeker/resume-wizard/${resumeId}`}>
                     <Button size="xs" variant="outline">
