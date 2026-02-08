@@ -89,12 +89,22 @@ export class SeekerService {
       .lean();
   }
 
+  async getResume(seekerId: string, resumeId: string) {
+    const resume = await Resume.findOne({
+      _id: resumeId,
+      seekerId: new mongoose.Types.ObjectId(seekerId),
+    }).lean();
+    if (!resume) throw new AppError("Resume not found", 404, false, "RESUME_NOT_FOUND");
+    return resume;
+  }
+
   async createResume(seekerId: string, input: CreateResumeInput) {
     const count = await Resume.countDocuments({ seekerId: new mongoose.Types.ObjectId(seekerId) });
     const resume = await Resume.create({
       seekerId: new mongoose.Types.ObjectId(seekerId),
       version: count + 1,
       isActive: count === 0,
+      title: (input.title ?? "").trim().slice(0, 120),
       fullName: input.fullName,
       headline: input.headline ?? "",
       location: input.location ?? "",
@@ -114,6 +124,39 @@ export class SeekerService {
     resume.isActive = true;
     await resume.save();
     return resume;
+  }
+
+  async updateResume(seekerId: string, resumeId: string, input: CreateResumeInput) {
+    const seekerOid = new mongoose.Types.ObjectId(seekerId);
+    const resume = await Resume.findOne({ _id: resumeId, seekerId: seekerOid });
+    if (!resume) throw new AppError("Resume not found", 404, false, "RESUME_NOT_FOUND");
+    resume.title = (input.title ?? "").trim().slice(0, 120);
+    resume.fullName = input.fullName;
+    resume.headline = input.headline ?? "";
+    resume.location = input.location ?? "";
+    resume.about = input.about ?? "";
+    resume.skills = input.skills ?? [];
+    resume.education = input.education ?? [];
+    resume.experience = input.experience ?? [];
+    await resume.save();
+    return resume;
+  }
+
+  async deleteResume(seekerId: string, resumeId: string) {
+    const seekerOid = new mongoose.Types.ObjectId(seekerId);
+    const resume = await Resume.findOne({ _id: resumeId, seekerId: seekerOid });
+    if (!resume) throw new AppError("Resume not found", 404, false, "RESUME_NOT_FOUND");
+    const wasActive = resume.isActive;
+    await Resume.findByIdAndDelete(resumeId);
+    if (wasActive) {
+      const next = await Resume.findOne({ seekerId: seekerOid }).sort({ createdAt: -1 });
+      if (next) {
+        next.isActive = true;
+        await next.save();
+        return { deleted: true, activatedId: next._id.toString() };
+      }
+    }
+    return { deleted: true };
   }
 }
 

@@ -12,6 +12,8 @@ export interface IResume extends Document {
   seekerId: mongoose.Types.ObjectId;
   version: number;
   isActive: boolean;
+  /** عنوان رزومه برای نمایش در لیست */
+  title: string;
   fullName: string;
   headline: string;
   location: string;
@@ -74,6 +76,7 @@ const resumeSchema = new Schema<IResume>(
     },
     version: { type: Number, required: true, default: 1 },
     isActive: { type: Boolean, default: true },
+    title: { type: String, default: "", trim: true, maxlength: 120 },
     fullName: { type: String, required: true, trim: true },
     headline: { type: String, default: "", trim: true },
     location: { type: String, default: "", trim: true },

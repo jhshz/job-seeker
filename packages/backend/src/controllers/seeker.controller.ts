@@ -50,10 +50,34 @@ export const getMyResumes = catchAsync(async (req: Request, res: Response): Prom
   sendSuccess(res, list);
 });
 
+export const getResume = catchAsync(async (req: Request, res: Response): Promise<void> => {
+  const seekerId = await getSeekerProfileId(req);
+  const resumeId = req.params.resumeId;
+  if (typeof resumeId !== "string") throw new AppError("Invalid resume id", 400, false, "INVALID_PARAMS");
+  const resume = await seekerService.getResume(seekerId, resumeId);
+  sendSuccess(res, resume);
+});
+
 export const createResume = catchAsync(async (req: Request, res: Response): Promise<void> => {
   const seekerId = await getSeekerProfileId(req);
   const resume = await seekerService.createResume(seekerId, req.body);
   sendSuccess(res, resume, 201);
+});
+
+export const updateResume = catchAsync(async (req: Request, res: Response): Promise<void> => {
+  const seekerId = await getSeekerProfileId(req);
+  const resumeId = req.params.resumeId;
+  if (typeof resumeId !== "string") throw new AppError("Invalid resume id", 400, false, "INVALID_PARAMS");
+  const resume = await seekerService.updateResume(seekerId, resumeId, req.body);
+  sendSuccess(res, resume);
+});
+
+export const deleteResume = catchAsync(async (req: Request, res: Response): Promise<void> => {
+  const seekerId = await getSeekerProfileId(req);
+  const resumeId = req.params.resumeId;
+  if (typeof resumeId !== "string") throw new AppError("Invalid resume id", 400, false, "INVALID_PARAMS");
+  const result = await seekerService.deleteResume(seekerId, resumeId);
+  sendSuccess(res, result);
 });
 
 export const activateResume = catchAsync(async (req: Request, res: Response): Promise<void> => {

@@ -33,6 +33,7 @@ export const updateSeekerProfileSchema = z.object({
 });
 
 export const createResumeSchema = z.object({
+  title: z.string().max(120).default(""),
   fullName: z.string().min(1),
   headline: z.string().default(""),
   location: z.string().default(""),

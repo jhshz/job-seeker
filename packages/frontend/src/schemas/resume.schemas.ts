@@ -20,6 +20,7 @@ export const experienceEntrySchema = z.object({
 });
 
 export const createResumeSchema = z.object({
+  title: z.string().max(120, "حداکثر ۱۲۰ کاراکتر").default(""),
   fullName: z.string().min(1, "نام و نام خانوادگی الزامی است"),
   headline: z.string().default(""),
   location: z.string().default(""),

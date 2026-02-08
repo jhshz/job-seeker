@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router";
 import {
   Box,
   Heading,
@@ -22,13 +22,20 @@ import {
   type EducationEntry,
   type ExperienceEntry,
 } from "@/schemas/resume.schemas";
-import { createResume, getSeekerProfile, type CreateResumePayload } from "@/api/seekers.api";
+import {
+  createResume,
+  updateResume,
+  getResume,
+  getSeekerProfile,
+  type CreateResumePayload,
+} from "@/api/seekers.api";
 import { queryKeys } from "@/api/query-keys";
 import { toaster } from "@/components/ui/toaster";
 import { getApiErrorMessage } from "@/api/axios";
 import { Loading } from "@/components/ui/loading";
 import { ErrorState } from "@/components/ui/error-state";
 import { HiOutlinePlus, HiOutlineTrash } from "react-icons/hi2";
+import type { Resume } from "@/api/types";
 
 const STEPS = [
   { id: 1, title: "مهارت‌ها", key: "skills" },
@@ -45,30 +52,72 @@ const resumeFormSchema = createResumeSchema.omit({
 });
 
 type ResumeFormInput = {
+  title: string;
   skills: string[];
   education: CreateResumeInput["education"];
   experience: CreateResumeInput["experience"];
 };
 
+function resumeToFormValues(r: Resume): ResumeFormInput {
+  const education = (r.education ?? []).map((e) => ({
+    institution: e.institution ?? "",
+    degree: e.degree ?? "",
+    field: e.field ?? "",
+    startYear: e.startYear ?? new Date().getFullYear(),
+    endYear: e.endYear ?? null,
+    description: e.description ?? "",
+  }));
+  const experience = (r.experience ?? []).map((ex) => ({
+    company: ex.company ?? "",
+    title: ex.title ?? "",
+    location: ex.location ?? "",
+    startDate: ex.startDate ? new Date(ex.startDate) : new Date(),
+    endDate: ex.endDate ? new Date(ex.endDate) : null,
+    current: ex.current ?? false,
+    description: ex.description ?? "",
+  }));
+  return {
+    title: r.title?.trim() ?? "",
+    skills: r.skills ?? [],
+    education,
+    experience,
+  };
+}
+
 export function ResumeWizard() {
   const navigate = useNavigate();
+  const { resumeId } = useParams<{ resumeId?: string }>();
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
+  const isEditMode = Boolean(resumeId);
 
   const { data: profile, isLoading: profileLoading, error: profileError, refetch } = useQuery({
     queryKey: queryKeys.seekers.me,
     queryFn: getSeekerProfile,
   });
 
+  const { data: resume, isLoading: resumeLoading, error: resumeError } = useQuery({
+    queryKey: [...queryKeys.seekers.resumes, resumeId!],
+    queryFn: () => getResume(resumeId!),
+    enabled: isEditMode && Boolean(resumeId),
+  });
+
   const form = useForm<ResumeFormInput>({
     // @ts-expect-error - zod optional vs form required
     resolver: zodResolver(resumeFormSchema),
     defaultValues: {
+      title: "",
       skills: [],
       education: [],
       experience: [],
     },
   });
+
+  useEffect(() => {
+    if (isEditMode && resume) {
+      form.reset(resumeToFormValues(resume));
+    }
+  }, [isEditMode, resume, form]);
 
   const educationFields = useFieldArray({
     control: form.control,
@@ -96,8 +145,26 @@ export function ResumeWizard() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: CreateResumePayload }) =>
+      updateResume(id, payload),
+    onSuccess: () => {
+      toaster.create({ title: "رزومه با موفقیت به‌روزرسانی شد", type: "success" });
+      queryClient.invalidateQueries({ queryKey: queryKeys.seekers.resumes });
+      navigate("/seeker/resumes");
+    },
+    onError: (err) => {
+      toaster.create({
+        title: "خطا",
+        description: getApiErrorMessage(err),
+        type: "error",
+      });
+    },
+  });
+
   const onSubmit = form.handleSubmit((data) => {
     const payload: CreateResumePayload = {
+      title: data.title?.trim() || undefined,
       fullName: profile?.fullName ?? "",
       headline: profile?.headline,
       location: profile?.location,
@@ -106,7 +173,11 @@ export function ResumeWizard() {
       education: data.education,
       experience: data.experience,
     };
-    createMutation.mutate(payload);
+    if (isEditMode && resumeId) {
+      updateMutation.mutate({ id: resumeId, payload });
+    } else {
+      createMutation.mutate(payload);
+    }
   });
 
   const addSkill = () => {
@@ -129,7 +200,9 @@ export function ResumeWizard() {
     );
   };
 
-  const nextStep = async () => {
+  const nextStep = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     if (step < 4) setStep((s) => s + 1);
   };
 
@@ -138,6 +211,14 @@ export function ResumeWizard() {
   const skills = form.watch("skills") ?? [];
 
   if (profileLoading) return <Loading />;
+  if (isEditMode && resumeLoading) return <Loading />;
+  if (isEditMode && (resumeError || (resumeId && !resume)))
+    return (
+      <ErrorState
+        message="رزومه یافت نشد یا خطا در بارگذاری."
+        onRetry={() => queryClient.invalidateQueries({ queryKey: [...queryKeys.seekers.resumes, resumeId!] })}
+      />
+    );
   if (profileError || !profile)
     return (
       <ErrorState
@@ -173,7 +254,7 @@ export function ResumeWizard() {
   return (
     <Box maxW="container.md">
       <Flex align="center" gap="3" mb="6">
-        <Heading size="lg">ساخت رزومه</Heading>
+        <Heading size="lg">{isEditMode ? "ویرایش رزومه" : "ساخت رزومه"}</Heading>
         <Badge colorPalette="brand" size="lg" px="2" py="1" borderRadius="md">
           گام {step} از {STEPS.length}
         </Badge>
@@ -206,9 +287,28 @@ export function ResumeWizard() {
         borderColor="border"
         bg="bg.panel"
       >
-        <form onSubmit={onSubmit}>
+        <form
+          onSubmit={(e) => {
+            if (step !== 4) {
+              e.preventDefault();
+              return;
+            }
+            onSubmit(e);
+          }}
+        >
           {step === 1 && (
             <Stack gap="4">
+              <Field.Root>
+                <Field.Label>عنوان رزومه</Field.Label>
+                <Input
+                  {...form.register("title")}
+                  placeholder="مثال: رزومه توسعه فرانت‌اند"
+                  maxLength={120}
+                />
+                <Text fontSize="xs" color="fg.muted" mt="1">
+                  برای تفکیک رزومه‌ها در لیست (اختیاری)
+                </Text>
+              </Field.Root>
               <Heading size="sm" mb="2" fontWeight="semibold">
                 مهارت‌ها
               </Heading>
@@ -534,16 +634,24 @@ export function ResumeWizard() {
                 </Link>
               )}
               {step < 4 ? (
-                <Button type="button" colorPalette="brand" onClick={nextStep}>
+                <Button
+                  type="button"
+                  colorPalette="brand"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    nextStep();
+                  }}
+                >
                   بعدی
                 </Button>
               ) : (
                 <Button
                   type="submit"
                   colorPalette="brand"
-                  loading={createMutation.isPending}
+                  loading={createMutation.isPending || updateMutation.isPending}
                 >
-                  ذخیره رزومه
+                  {isEditMode ? "ذخیره تغییرات" : "ذخیره رزومه"}
                 </Button>
               )}
             </Flex>

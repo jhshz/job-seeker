@@ -27,10 +27,25 @@ router.get(
 );
 
 router.get("/me/resumes", seekerController.getMyResumes);
+router.get(
+  "/me/resumes/:resumeId",
+  validateRequest({ params: seekerResumeIdParamSchema }),
+  seekerController.getResume,
+);
 router.post(
   "/me/resumes",
   validateRequest({ body: createResumeSchema }),
   seekerController.createResume,
+);
+router.patch(
+  "/me/resumes/:resumeId",
+  validateRequest({ params: seekerResumeIdParamSchema, body: createResumeSchema }),
+  seekerController.updateResume,
+);
+router.delete(
+  "/me/resumes/:resumeId",
+  validateRequest({ params: seekerResumeIdParamSchema }),
+  seekerController.deleteResume,
 );
 router.patch(
   "/me/resumes/:resumeId/activate",

@@ -79,6 +79,7 @@ export const router = createBrowserRouter([
           { path: "applications", element: <SeekerApplications /> },
           { path: "resumes", element: <SeekerResumes /> },
           { path: "resume-wizard", element: <ResumeWizard /> },
+          { path: "resume-wizard/:resumeId", element: <ResumeWizard /> },
         ],
       },
       {

@@ -28,6 +28,8 @@ export const endpoints = {
     me: `${API_PREFIX}/seekers/me`,
     applications: `${API_PREFIX}/seekers/me/applications`,
     resumes: `${API_PREFIX}/seekers/me/resumes`,
+    resumeDetail: (resumeId: string) =>
+      `${API_PREFIX}/seekers/me/resumes/${resumeId}`,
     activateResume: (resumeId: string) =>
       `${API_PREFIX}/seekers/me/resumes/${resumeId}/activate`,
   },

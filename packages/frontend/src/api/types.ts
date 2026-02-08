@@ -101,6 +101,8 @@ export interface JobApplication {
 export interface Resume {
   id: string;
   seekerId: string;
+  /** عنوان رزومه برای نمایش در لیست */
+  title?: string;
   fullName: string;
   headline?: string;
   location?: string;
