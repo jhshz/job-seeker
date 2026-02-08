@@ -1,9 +1,7 @@
-import { useState } from "react";
 import {
   Box,
   Button,
   Field,
-  Group,
   Input,
   RadioGroup,
   Stack,
@@ -14,14 +12,12 @@ import { registerFormSchema } from "@/schemas/auth.schemas";
 import type { RegisterFormInput } from "@/schemas/auth.schemas";
 import { useRequestOtp } from "@/hooks/use-auth";
 import { useNavigate, Link as RouterLink } from "react-router";
-import { LuEye, LuEyeOff } from "react-icons/lu";
+import { PasswordInput } from "@/components/auth/password-input";
 import { PasswordStrength } from "@/components/auth/password-strength";
 
 export function Register() {
   const navigate = useNavigate();
   const requestOtp = useRequestOtp();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<RegisterFormInput>({
     resolver: zodResolver(registerFormSchema),
@@ -135,23 +131,10 @@ export function Register() {
           </Field.Root>
           <Field.Root invalid={!!form.formState.errors.password}>
             <Field.Label>رمز عبور</Field.Label>
-            <Group attached w="full">
-              <Input
-                flex="1"
-                {...form.register("password")}
-                type={showPassword ? "text" : "password"}
-                placeholder="حداقل ۸ کاراکتر، حرف، عدد و کاراکتر خاص"
-              />
-              <Button
-                type="button"
-                aria-label={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
-                bg="bg.subtle"
-                variant="outline"
-                onClick={() => setShowPassword((p) => !p)}
-              >
-                {showPassword ? <LuEyeOff /> : <LuEye />}
-              </Button>
-            </Group>
+            <PasswordInput
+              {...form.register("password")}
+              placeholder="حداقل ۸ کاراکتر، حرف، عدد و کاراکتر خاص"
+            />
             <PasswordStrength password={form.watch("password") ?? ""} />
             <Field.ErrorText>
               {form.formState.errors.password?.message}
@@ -159,23 +142,10 @@ export function Register() {
           </Field.Root>
           <Field.Root invalid={!!form.formState.errors.confirmPassword}>
             <Field.Label>تکرار رمز عبور</Field.Label>
-            <Group attached w="full">
-              <Input
-                flex="1"
-                {...form.register("confirmPassword")}
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="رمز عبور را دوباره وارد کنید"
-              />
-              <Button
-                type="button"
-                aria-label={showConfirmPassword ? "مخفی کردن رمز" : "نمایش رمز"}
-                bg="bg.subtle"
-                variant="outline"
-                onClick={() => setShowConfirmPassword((p) => !p)}
-              >
-                {showConfirmPassword ? <LuEyeOff /> : <LuEye />}
-              </Button>
-            </Group>
+            <PasswordInput
+              {...form.register("confirmPassword")}
+              placeholder="رمز عبور را دوباره وارد کنید"
+            />
             <Field.ErrorText>
               {form.formState.errors.confirmPassword?.message}
             </Field.ErrorText>

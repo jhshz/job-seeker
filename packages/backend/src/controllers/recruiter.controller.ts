@@ -38,6 +38,14 @@ export const listJobs = catchAsync(async (req: Request, res: Response): Promise<
   sendSuccess(res, list, 200, meta as unknown as Record<string, unknown>);
 });
 
+export const getJob = catchAsync(async (req: Request, res: Response): Promise<void> => {
+  const recruiterId = await getRecruiterId(req);
+  const jobId = req.params.jobId;
+  if (typeof jobId !== "string") throw new AppError("Invalid job id", 400, false, "INVALID_PARAMS");
+  const job = await recruiterService.getRecruiterJob(recruiterId, jobId);
+  sendSuccess(res, job);
+});
+
 export const updateJob = catchAsync(async (req: Request, res: Response): Promise<void> => {
   const recruiterId = await getRecruiterId(req);
   const jobId = req.params.jobId;

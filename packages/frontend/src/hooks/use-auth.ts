@@ -41,7 +41,7 @@ export function useVerifyOtp() {
       setAuth(data.user, data.accessToken);
       if (variables?.password) {
         try {
-          await setPasswordApi(variables.password);
+          await setPasswordApi({ newPassword: variables.password });
         } catch (err) {
           toaster.create({
             title: "خطا",

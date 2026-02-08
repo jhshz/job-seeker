@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Button,
@@ -14,14 +13,13 @@ import { otpRequestSchema, passwordLoginSchema } from "@/schemas/auth.schemas";
 import type { z } from "zod";
 import { useRequestOtp, useLoginPassword } from "@/hooks/use-auth";
 import { useNavigate, Link as RouterLink } from "react-router";
-import { LuEye, LuEyeOff } from "react-icons/lu";
+import { PasswordInput } from "@/components/auth/password-input";
 
 type OtpForm = z.infer<typeof otpRequestSchema>;
 type PasswordForm = z.infer<typeof passwordLoginSchema>;
 
 export function Login() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
   const requestOtp = useRequestOtp();
   const loginPassword = useLoginPassword();
 
@@ -108,23 +106,10 @@ export function Login() {
                   dir="rtl"
                 >
                   <Field.Label>رمز عبور</Field.Label>
-                  <Group attached w="full">
-                    <Input
-                      flex="1"
-                      {...passwordForm.register("password")}
-                      type={showPassword ? "text" : "password"}
-                      placeholder="رمز عبور"
-                    />
-                    <Button
-                      type="button"
-                      aria-label={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
-                      bg="bg.subtle"
-                      variant="outline"
-                      onClick={() => setShowPassword((p) => !p)}
-                    >
-                      {showPassword ? <LuEyeOff /> : <LuEye />}
-                    </Button>
-                  </Group>
+                  <PasswordInput
+                    {...passwordForm.register("password")}
+                    placeholder="رمز عبور"
+                  />
                   <Field.ErrorText>
                     {passwordForm.formState.errors.password?.message}
                   </Field.ErrorText>

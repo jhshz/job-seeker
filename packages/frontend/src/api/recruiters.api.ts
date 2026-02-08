@@ -43,6 +43,13 @@ export async function listRecruiterJobs() {
   return data.data;
 }
 
+export async function getRecruiterJobById(jobId: string) {
+  const { data } = await api.get<{ success: boolean; data: Job }>(
+    endpoints.recruiters.jobDetail(jobId),
+  );
+  return data.data;
+}
+
 export type CreateJobPayload = {
   title: string;
   description: string;

@@ -14,13 +14,20 @@ export function RecruiterJobs() {
   });
 
   if (isLoading) return <Loading />;
-  if (error) return <ErrorState message="خطا در بارگذاری" onRetry={() => refetch()} />;
+  if (error)
+    return <ErrorState message="خطا در بارگذاری" onRetry={() => refetch()} />;
 
   const jobs = data ?? [];
 
   return (
     <Box>
-      <Flex justify="space-between" align="center" flexWrap="wrap" gap="4" mb="6">
+      <Flex
+        justify="space-between"
+        align="center"
+        flexWrap="wrap"
+        gap="4"
+        mb="6"
+      >
         <Heading size="lg">آگهی‌های من</Heading>
         <Link to="/recruiter/jobs/create">
           <Button colorPalette="brand" size="sm">
@@ -50,14 +57,19 @@ export function RecruiterJobs() {
             <Box key={job.id}>
               <JobCard job={job} showStatus />
               <Flex gap="2" mt="2" flexWrap="wrap">
+                <Link to={`/recruiter/jobs/${job.id}/applications`}>
+                  <Button size="xs" variant="outline" colorPalette="brand">
+                    درخواست‌ها
+                  </Button>
+                </Link>
                 <Link to={`/recruiter/jobs/${job.id}/edit`}>
-                  <Button size="xs" variant="outline">
+                  <Button size="xs" variant="ghost">
                     ویرایش
                   </Button>
                 </Link>
-                <Link to={`/recruiter/jobs/${job.id}/applications`}>
-                  <Button size="xs" variant="ghost" colorPalette="brand">
-                    درخواست‌ها
+                <Link to={`/jobs/${job.id}`}>
+                  <Button size="xs" variant="ghost">
+                    مشاهده آگهی
                   </Button>
                 </Link>
               </Flex>

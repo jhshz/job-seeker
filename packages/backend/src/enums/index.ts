@@ -22,6 +22,7 @@ export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 export const OtpPurpose = {
   LOGIN: "login",
   REGISTER: "register",
+  RESET_PASSWORD: "reset_password",
 } as const;
 export type OtpPurpose = (typeof OtpPurpose)[keyof typeof OtpPurpose];
 

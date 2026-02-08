@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Heading,
@@ -12,35 +12,22 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRecruiterProfile, updateRecruiterProfile } from "@/api/recruiters.api";
-import { setPassword } from "@/api/auth.api";
 import { queryKeys } from "@/api/query-keys";
 import { updateRecruiterProfileSchema } from "@/schemas/profile.schemas";
-import { passwordFieldSchema } from "@/schemas/auth.schemas";
 import { Loading } from "@/components/ui/loading";
 import { ErrorState } from "@/components/ui/error-state";
 import { toaster } from "@/components/ui/toaster";
 import { getApiErrorMessage } from "@/api/axios";
-import { PasswordStrength } from "@/components/auth/password-strength";
+import { ResetPasswordModal } from "./reset-password-modal";
+import type { z } from "zod";
 
 type ProfileForm = z.infer<typeof updateRecruiterProfileSchema>;
 
-const resetPasswordSchema = z
-  .object({
-    newPassword: passwordFieldSchema,
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "رمز عبور و تکرار آن مطابقت ندارند",
-    path: ["confirmPassword"],
-  });
-
-type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
-
 export function RecruiterProfile() {
   const queryClient = useQueryClient();
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   const { data: profile, isLoading, error, refetch } = useQuery({
     queryKey: queryKeys.recruiters.me,
@@ -56,14 +43,6 @@ export function RecruiterProfile() {
       location: "",
       industry: "",
       size: "",
-    },
-  });
-
-  const passwordForm = useForm<ResetPasswordForm>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      newPassword: "",
-      confirmPassword: "",
     },
   });
 
@@ -95,25 +74,7 @@ export function RecruiterProfile() {
     },
   });
 
-  const changePassword = useMutation({
-    mutationFn: (newPassword: string) => setPassword(newPassword),
-    onSuccess: () => {
-      toaster.create({ title: "رمز عبور با موفقیت تغییر کرد", type: "success" });
-      passwordForm.reset({ newPassword: "", confirmPassword: "" });
-    },
-    onError: (err) => {
-      toaster.create({
-        title: "خطا",
-        description: getApiErrorMessage(err),
-        type: "error",
-      });
-    },
-  });
-
   const onProfileSubmit = profileForm.handleSubmit((data) => updateProfile.mutate(data));
-  const onPasswordSubmit = passwordForm.handleSubmit((data) =>
-    changePassword.mutate(data.newPassword),
-  );
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorState message="خطا در بارگذاری" onRetry={() => refetch()} />;
@@ -220,44 +181,19 @@ export function RecruiterProfile() {
         <Text fontSize="sm" color="fg.muted" mb="4">
           پس از تغییر رمز عبور، باید مجدداً وارد شوید.
         </Text>
-        <form onSubmit={onPasswordSubmit}>
-          <Stack gap="4">
-            <Field.Root invalid={!!passwordForm.formState.errors.newPassword}>
-              <Field.Label>رمز عبور جدید</Field.Label>
-              <Input
-                type="password"
-                {...passwordForm.register("newPassword")}
-                placeholder="رمز عبور جدید"
-              />
-              <PasswordStrength
-                password={passwordForm.watch("newPassword", "")}
-              />
-              <Field.ErrorText>
-                {passwordForm.formState.errors.newPassword?.message}
-              </Field.ErrorText>
-            </Field.Root>
-            <Field.Root invalid={!!passwordForm.formState.errors.confirmPassword}>
-              <Field.Label>تکرار رمز عبور</Field.Label>
-              <Input
-                type="password"
-                {...passwordForm.register("confirmPassword")}
-                placeholder="تکرار رمز عبور"
-              />
-              <Field.ErrorText>
-                {passwordForm.formState.errors.confirmPassword?.message}
-              </Field.ErrorText>
-            </Field.Root>
-            <Button
-              type="submit"
-              variant="outline"
-              colorPalette="brand"
-              loading={changePassword.isPending}
-            >
-              تغییر رمز عبور
-            </Button>
-          </Stack>
-        </form>
+        <Button
+          variant="outline"
+          colorPalette="brand"
+          onClick={() => setPasswordModalOpen(true)}
+        >
+          تغییر رمز عبور
+        </Button>
       </Box>
+
+      <ResetPasswordModal
+        open={passwordModalOpen}
+        onOpenChange={setPasswordModalOpen}
+      />
     </Box>
   );
 }

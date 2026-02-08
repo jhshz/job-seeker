@@ -71,9 +71,19 @@ export const login = catchAsync(async (req: Request, res: Response): Promise<voi
 
 export const setPassword = catchAsync(async (req: Request, res: Response): Promise<void> => {
   if (!req.user) throw new AppError("Authentication required", 401, false, "AUTH_REQUIRED");
-  const { newPassword } = req.body;
-  await authService.setPassword({ userId: req.user.id, newPassword });
+  const { currentPassword, newPassword } = req.body;
+  await authService.setPassword({
+    userId: req.user.id,
+    currentPassword,
+    newPassword,
+  });
   sendSuccess(res, { message: "Password set successfully" });
+});
+
+export const resetPasswordByOtp = catchAsync(async (req: Request, res: Response): Promise<void> => {
+  const { phoneE164, code, newPassword } = req.body;
+  await authService.resetPasswordByOtp({ phoneE164, code, newPassword });
+  sendSuccess(res, { message: "Password reset successfully" });
 });
 
 export const refresh = catchAsync(async (req: Request, res: Response): Promise<void> => {

@@ -32,6 +32,13 @@ router.post(
   recruiterController.createJob,
 );
 router.get("/jobs", requireAuth, requireRole("recruiter"), recruiterController.listJobs);
+router.get(
+  "/jobs/:jobId",
+  requireAuth,
+  requireRole("recruiter"),
+  validateRequest({ params: recruiterJobIdParamSchema }),
+  recruiterController.getJob,
+);
 router.patch(
   "/jobs/:jobId",
   requireAuth,

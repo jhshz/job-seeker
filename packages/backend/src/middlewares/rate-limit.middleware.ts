@@ -58,9 +58,9 @@ export const otpRequestRateLimiter = rateLimit({
   legacyHeaders: false,
   // Custom identifier: IP + phone
   identifier: (req: Request): string => {
-    const phone = req.body?.phone || ""; // Extract phone from body
-    const ip = getClientIp(req); // Get the IP with proper IPv6 handling
-    return `${ip}:${phone}`; // Combine IP and phone to form the unique key
+    const phone = req.body?.phoneE164 ?? req.body?.phone ?? "";
+    const ip = getClientIp(req);
+    return `${ip}:${phone}`;
   },
   handler: (req: Request, res: Response) => {
     res.status(429).json({

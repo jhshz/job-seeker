@@ -4,8 +4,8 @@ import { phoneE164Schema } from "./common.schemas";
 
 export const otpRequestSchema = z.object({
   phoneE164: phoneE164Schema,
-  purpose: z.enum(["login", "register"], {
-    message: "Purpose must be 'login' or 'register'",
+  purpose: z.enum(["login", "register", "reset_password"], {
+    message: "Purpose must be 'login', 'register', or 'reset_password'",
   }),
 });
 
@@ -33,6 +33,26 @@ export const passwordLoginSchema = z.object({
 const PASSWORD_ASCII_ONLY = /^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{}|;':",.<>?/\\`~]+$/;
 
 export const setPasswordSchema = z.object({
+  currentPassword: z.string().optional(),
+  newPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password must be at most 128 characters")
+    .regex(/[a-zA-Z]/, "Password must contain at least one English letter")
+    .regex(/[0-9]/, "Password must contain at least one English digit")
+    .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character")
+    .refine(
+      (p) => PASSWORD_ASCII_ONLY.test(p),
+      "Password must contain only English letters, English digits, and allowed special characters",
+    ),
+});
+
+export const resetPasswordByOtpSchema = z.object({
+  phoneE164: phoneE164Schema,
+  code: z
+    .string()
+    .length(6, "OTP must be 6 digits")
+    .regex(/^\d{6}$/, "OTP must contain only digits"),
   newPassword: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -56,3 +76,4 @@ export type OtpRequestInput = z.infer<typeof otpRequestSchema>;
 export type OtpVerifyInput = z.infer<typeof otpVerifySchema>;
 export type PasswordLoginInput = z.infer<typeof passwordLoginSchema>;
 export type SetPasswordInput = z.infer<typeof setPasswordSchema>;
+export type ResetPasswordByOtpInput = z.infer<typeof resetPasswordByOtpSchema>;

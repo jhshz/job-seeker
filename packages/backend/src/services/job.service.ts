@@ -47,7 +47,7 @@ export class JobService {
   async getPublicById(jobId: string) {
     const job = await Job.findOne({
       _id: jobId,
-      status: "published",
+      status: { $in: ["draft", "published", "closed"] },
     })
       .populate("recruiterId", "companyName companyDescription location industry logoFileId")
       .lean();

@@ -18,7 +18,9 @@ const phoneSchema = z
 
 export const otpRequestSchema = z.object({
   phoneE164: phoneSchema,
-  purpose: z.enum(["login", "register"], { message: "نوع درخواست نامعتبر است" }),
+  purpose: z.enum(["login", "register", "reset_password"], {
+    message: "نوع درخواست نامعتبر است",
+  }),
 });
 
 export const otpVerifySchema = z.object({
@@ -76,7 +78,37 @@ export const registerFormSchema = z
     path: ["confirmPassword"],
   });
 
+/** Change password when user is logged in: with current password */
+export const setPasswordFormSchema = z
+  .object({
+    currentPassword: z.string().min(1, "رمز عبور فعلی الزامی است"),
+    newPassword: passwordFieldSchema,
+    confirmPassword: z.string().min(1, "تکرار رمز عبور الزامی است"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "رمز عبور و تکرار آن مطابقت ندارند",
+    path: ["confirmPassword"],
+  });
+
+/** Reset password by OTP (phone + code) - no auth */
+export const resetPasswordByOtpSchema = z
+  .object({
+    phoneE164: phoneSchema,
+    code: z
+      .string()
+      .length(6, "کد تأیید باید ۶ رقم باشد")
+      .regex(/^\d{6}$/, "کد تأیید باید فقط شامل اعداد باشد"),
+    newPassword: passwordFieldSchema,
+    confirmPassword: z.string().min(1, "تکرار رمز عبور الزامی است"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "رمز عبور و تکرار آن مطابقت ندارند",
+    path: ["confirmPassword"],
+  });
+
 export type OtpRequestInput = z.infer<typeof otpRequestSchema>;
 export type OtpVerifyInput = z.infer<typeof otpVerifySchema>;
 export type PasswordLoginInput = z.infer<typeof passwordLoginSchema>;
 export type RegisterFormInput = z.infer<typeof registerFormSchema>;
+export type SetPasswordFormInput = z.infer<typeof setPasswordFormSchema>;
+export type ResetPasswordByOtpFormInput = z.infer<typeof resetPasswordByOtpSchema>;

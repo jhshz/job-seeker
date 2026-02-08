@@ -2,7 +2,7 @@ import { api } from "./axios";
 import { endpoints } from "./endpoints";
 import type { User } from "./types";
 
-export type OtpPurpose = "login" | "register";
+export type OtpPurpose = "login" | "register" | "reset_password";
 
 export type OtpRequestPayload = { phoneE164: string; purpose: OtpPurpose };
 export type OtpRequestResponse = { requestId: string; message: string; expiresAt: string };
@@ -46,8 +46,20 @@ export async function loginPassword(payload: PasswordLoginPayload) {
   return data.data;
 }
 
-export async function setPassword(newPassword: string) {
-  await api.post(endpoints.auth.setPassword, { newPassword });
+export type SetPasswordPayload = { currentPassword?: string; newPassword: string };
+
+export async function setPassword(payload: SetPasswordPayload) {
+  await api.post(endpoints.auth.setPassword, payload);
+}
+
+export type ResetPasswordByOtpPayload = {
+  phoneE164: string;
+  code: string;
+  newPassword: string;
+};
+
+export async function resetPasswordByOtp(payload: ResetPasswordByOtpPayload) {
+  await api.post(endpoints.auth.resetPasswordByOtp, payload);
 }
 
 export async function logout() {

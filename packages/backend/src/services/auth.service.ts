@@ -18,6 +18,13 @@ export interface PasswordLoginParams {
 
 export interface SetPasswordParams {
   userId: string;
+  currentPassword?: string;
+  newPassword: string;
+}
+
+export interface ResetPasswordByOtpParams {
+  phoneE164: string;
+  code: string;
   newPassword: string;
 }
 
@@ -153,10 +160,11 @@ export class AuthService {
   }
 
   /**
-   * Sets password for user (requires authentication)
+   * Sets password for user (requires authentication).
+   * If user already has a password, currentPassword must be provided and match.
    */
   async setPassword(params: SetPasswordParams): Promise<void> {
-    const { userId, newPassword } = params;
+    const { userId, currentPassword, newPassword } = params;
 
     const user = await User.findById(userId);
 
@@ -164,15 +172,48 @@ export class AuthService {
       throw new AppError("User not found", 404);
     }
 
+    if (user.passwordHash) {
+      if (!currentPassword) {
+        throw new AppError("Current password is required", 400, false, "CURRENT_PASSWORD_REQUIRED");
+      }
+      const isValid = await verifyPassword(currentPassword, user.passwordHash);
+      if (!isValid) {
+        throw new AppError("Current password is incorrect", 401, false, "INVALID_CURRENT_PASSWORD");
+      }
+    }
+
     const passwordHash = await hashPassword(newPassword);
 
-    // Update user
     user.passwordHash = passwordHash;
     user.passwordVersion += 1;
     await user.save();
 
-    // Revoke all existing refresh tokens (force re-login)
     await tokenService.revokeAllUserTokens(userId);
+  }
+
+  /**
+   * Resets password by verifying OTP (phone + code). No auth required.
+   */
+  async resetPasswordByOtp(params: ResetPasswordByOtpParams): Promise<void> {
+    const { phoneE164, code, newPassword } = params;
+
+    const { phoneE164: verifiedPhone } = await otpService.verifyOtpByPhonePurposeCode(
+      phoneE164,
+      "reset_password",
+      code,
+    );
+
+    const user = await User.findOne({ phoneE164: verifiedPhone });
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+    user.passwordHash = passwordHash;
+    user.passwordVersion += 1;
+    await user.save();
+
+    await tokenService.revokeAllUserTokens(user._id.toString());
   }
 
   /**

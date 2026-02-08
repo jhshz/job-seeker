@@ -11,6 +11,7 @@ import {
   otpVerifySchema,
   passwordLoginSchema,
   setPasswordSchema,
+  resetPasswordByOtpSchema,
   refreshTokenBodySchema,
   logoutSchema,
 } from "@schemas";
@@ -41,6 +42,12 @@ router.post(
   requireAuth,
   validateRequest({ body: setPasswordSchema }),
   authController.setPassword,
+);
+
+router.post(
+  "/password/reset-by-otp",
+  validateRequest({ body: resetPasswordByOtpSchema }),
+  authController.resetPasswordByOtp,
 );
 
 router.post(

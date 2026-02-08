@@ -88,6 +88,15 @@ export class RecruiterService {
     return { list, meta };
   }
 
+  async getRecruiterJob(recruiterId: string, jobId: string) {
+    const job = await Job.findOne({
+      _id: jobId,
+      recruiterId: new mongoose.Types.ObjectId(recruiterId),
+    }).lean();
+    if (!job) throw new AppError("Job not found", 404, false, "JOB_NOT_FOUND");
+    return toJobResponse(job as unknown as LeanJob);
+  }
+
   async updateJob(recruiterId: string, jobId: string, data: UpdateJobInput) {
     const job = await Job.findOne({
       _id: jobId,
