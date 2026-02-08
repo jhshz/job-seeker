@@ -1,26 +1,44 @@
 import { Link } from "react-router";
 import {
   Box,
-  Container,
   Heading,
-  Table,
   Text,
+  Table,
   Badge,
   EmptyState,
   Button,
+  Flex,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getMyApplications } from "@/api/seekers.api";
 import { queryKeys } from "@/api/query-keys";
+import type { JobApplication } from "@/api/types";
 import { Loading } from "@/components/ui/loading";
 import { ErrorState } from "@/components/ui/error-state";
 
-const STATUS_LABELS: Record<string, { label: string; color: "gray" | "blue" | "green" | "red" }> = {
+const STATUS_LABELS: Record<string, { label: string; color: "gray" | "blue" | "green" | "red" | "orange" }> = {
+  applied: { label: "ارسال شده", color: "blue" },
+  reviewing: { label: "در حال بررسی", color: "blue" },
+  interview: { label: "مصاحبه", color: "orange" },
+  offered: { label: "پیشنهاد شده", color: "green" },
+  rejected: { label: "رد شده", color: "red" },
+  withdrawn: { label: "انصرافی", color: "gray" },
   pending: { label: "در انتظار", color: "gray" },
   reviewed: { label: "بررسی شده", color: "blue" },
   accepted: { label: "پذیرفته شده", color: "green" },
-  rejected: { label: "رد شده", color: "red" },
 };
+
+function getJobId(app: JobApplication): string {
+  const j = app.jobId;
+  if (typeof j === "string") return j;
+  return (j?.id ?? j?._id ?? "") as string;
+}
+
+function getJobTitle(app: JobApplication): string {
+  const j = app.jobId;
+  if (typeof j === "string") return j.slice(0, 8) + "…";
+  return (j as { title?: string })?.title ?? getJobId(app).slice(0, 8) + "…";
+}
 
 function getStatusBadge(status: string) {
   const config = STATUS_LABELS[status] ?? { label: status, color: "gray" as const };
@@ -43,15 +61,16 @@ export function SeekerApplications() {
   const applications = data?.applications ?? [];
 
   return (
-    <Container maxW="container.xl">
-      <Heading size="lg" mb="6">
-        درخواست‌های من
-      </Heading>
+    <Box>
+      <Flex justify="space-between" align="center" flexWrap="wrap" gap="4" mb="6">
+        <Heading size="lg">درخواست‌های من</Heading>
+      </Flex>
       {applications.length === 0 ? (
         <EmptyState.Root
           borderWidth="1px"
           borderRadius="md"
           borderColor="border"
+          bg="bg.panel"
           py="12"
         >
           <EmptyState.Content>
@@ -72,9 +91,10 @@ export function SeekerApplications() {
           borderRadius="md"
           borderWidth="1px"
           borderColor="border"
+          bg="bg.panel"
           overflow="hidden"
         >
-          <Text fontSize="sm" color="fg.muted" mb="3">
+          <Text fontSize="sm" color="fg.muted" mb="3" px="4" pt="4">
             تعداد {applications.length} درخواست
           </Text>
           <Table.ScrollArea>
@@ -96,9 +116,9 @@ export function SeekerApplications() {
                 {applications.map((a) => (
                   <Table.Row key={a.id}>
                     <Table.Cell>
-                      <Link to={`/jobs/${a.jobId}`}>
+                      <Link to={`/jobs/${getJobId(a)}`}>
                         <Text fontWeight="medium" color="brand.solid" _hover={{ textDecoration: "underline" }}>
-                          {a.jobId.slice(0, 8)}…
+                          {getJobTitle(a)}
                         </Text>
                       </Link>
                     </Table.Cell>
@@ -117,6 +137,6 @@ export function SeekerApplications() {
           </Table.ScrollArea>
         </Box>
       )}
-    </Container>
+    </Box>
   );
 }

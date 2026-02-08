@@ -13,6 +13,7 @@ export const queryKeys = {
       ["recruiters", "jobs", jobId, "applications", params ?? {}] as const,
   },
   seekers: {
+    me: ["seekers", "me"] as const,
     applications: (params?: Record<string, unknown>) =>
       ["seekers", "applications", params ?? {}] as const,
     resumes: ["seekers", "resumes"] as const,

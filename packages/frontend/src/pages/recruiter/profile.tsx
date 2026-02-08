@@ -20,7 +20,7 @@ import { Loading } from "@/components/ui/loading";
 import { ErrorState } from "@/components/ui/error-state";
 import { toaster } from "@/components/ui/toaster";
 import { getApiErrorMessage } from "@/api/axios";
-import { ResetPasswordModal } from "./reset-password-modal";
+import { ResetPasswordModal } from "@/components/auth/reset-password-modal";
 import type { z } from "zod";
 
 type ProfileForm = z.infer<typeof updateRecruiterProfileSchema>;

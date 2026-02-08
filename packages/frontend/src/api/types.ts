@@ -82,9 +82,15 @@ export interface Job {
   updatedAt: string;
 }
 
+export interface JobApplicationJob {
+  id?: string;
+  _id?: string;
+  title?: string;
+}
+
 export interface JobApplication {
   id: string;
-  jobId: string;
+  jobId: string | JobApplicationJob;
   seekerId: string;
   resumeId: string;
   status: string;

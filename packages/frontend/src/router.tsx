@@ -1,9 +1,10 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { AppShell } from "@/components/layouts/app-shell";
 import { AuthLayout } from "@/components/layouts/auth-layout";
 import { ProtectedRoute } from "@/components/layouts/protected-route";
 import { RoleRoute } from "@/components/layouts/role-route";
 import { RecruiterLayout } from "@/components/layouts/recruiter-layout";
+import { SeekerLayout } from "@/components/layouts/seeker-layout";
 import {
   Home,
   Jobs,
@@ -67,7 +68,7 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <RoleRoute role="seeker">
-              <Outlet />
+              <SeekerLayout />
             </RoleRoute>
           </ProtectedRoute>
         ),

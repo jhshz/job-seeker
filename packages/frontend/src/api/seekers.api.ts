@@ -2,6 +2,13 @@ import { api } from "./axios";
 import { endpoints } from "./endpoints";
 import type { JobApplication, Resume, SeekerProfile } from "./types";
 
+export async function getSeekerProfile() {
+  const { data } = await api.get<{ success: boolean; data: SeekerProfile }>(
+    endpoints.seekers.me,
+  );
+  return data.data;
+}
+
 export type UpdateSeekerProfilePayload = Partial<
   Pick<SeekerProfile, "fullName" | "headline" | "location" | "about" | "skills" | "education" | "experience">
 > & { avatarFileId?: string | null };
