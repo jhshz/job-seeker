@@ -73,16 +73,6 @@ export function Home() {
                   مشاهده آگهی‌های شغلی
                 </Button>
               </Link>
-              <Link to="/auth/register">
-                <Button
-                  variant="outline"
-                  colorPalette="brand"
-                  size="lg"
-                  w={{ base: "full", sm: "auto" }}
-                >
-                  ثبت‌نام / ورود
-                </Button>
-              </Link>
             </Flex>
           </Flex>
         </Container>

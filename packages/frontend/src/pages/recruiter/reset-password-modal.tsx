@@ -266,7 +266,7 @@ export function ResetPasswordModal({ open, onOpenChange }: Props) {
                     invalid={!!formWithOtp.formState.errors.phoneE164}
                   >
                     <Field.Label>شماره موبایل</Field.Label>
-                    <Flex gap="2" flexDirection="row-reverse">
+                    <Flex gap="2">
                       <Input
                         flex="1"
                         {...formWithOtp.register("phoneE164")}

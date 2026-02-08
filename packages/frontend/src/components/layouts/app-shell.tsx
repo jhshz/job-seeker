@@ -14,13 +14,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import { useLogout } from "@/hooks/use-auth";
 import logoUrl from "@/assets/images/logo.svg?url";
 
-function NavLink({
-  to,
-  children,
-}: {
-  to: string;
-  children: React.ReactNode;
-}) {
+function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
   return (
     <Link to={to}>
       <Text
@@ -112,11 +106,7 @@ export function AppShell() {
         mt="auto"
       >
         <Container maxW="container.xl">
-          <SimpleGrid
-            columns={{ base: 1, md: 3 }}
-            gap="8"
-            mb="8"
-          >
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap="8" mb="8">
             <Box>
               <Link to="/">
                 <Flex align="center" gap="2" mb="3" display="inline-flex">
@@ -163,33 +153,6 @@ export function AppShell() {
                     _hover={{ color: "brand.solid" }}
                   >
                     ثبت‌نام
-                  </Text>
-                </Link>
-              </Flex>
-            </Box>
-            <Box>
-              <Text fontWeight="semibold" fontSize="sm" color="fg" mb="3">
-                نقش‌ها
-              </Text>
-              <Flex direction="column" gap="2">
-                <Link to="/auth/register">
-                  <Text
-                    as="span"
-                    fontSize="sm"
-                    color="fg.muted"
-                    _hover={{ color: "brand.solid" }}
-                  >
-                    کارجو
-                  </Text>
-                </Link>
-                <Link to="/auth/register">
-                  <Text
-                    as="span"
-                    fontSize="sm"
-                    color="fg.muted"
-                    _hover={{ color: "brand.solid" }}
-                  >
-                    کارفرما
                   </Text>
                 </Link>
               </Flex>
