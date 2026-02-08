@@ -20,6 +20,8 @@ export const otpVerifySchema = z.object({
   role: z.enum(["seeker", "recruiter"]).optional(),
   /** Full name for seeker when purpose is "register" and role is "seeker" */
   fullName: z.string().max(200).trim().optional(),
+  /** Company name for recruiter when purpose is "register" and role is "recruiter" */
+  companyName: z.string().min(1).max(200).trim().optional(),
 });
 
 export const passwordLoginSchema = z.object({
@@ -27,14 +29,21 @@ export const passwordLoginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+/** Only English letters, English digits (0-9), and ASCII special chars allowed */
+const PASSWORD_ASCII_ONLY = /^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{}|;':",.<>?/\\`~]+$/;
+
 export const setPasswordSchema = z.object({
   newPassword: z
     .string()
     .min(8, "Password must be at least 8 characters")
     .max(128, "Password must be at most 128 characters")
-    .regex(/[a-zA-Z]/, "Password must contain at least one letter")
-    .regex(/\d/, "Password must contain at least one digit")
-    .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character"),
+    .regex(/[a-zA-Z]/, "Password must contain at least one English letter")
+    .regex(/[0-9]/, "Password must contain at least one English digit")
+    .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character")
+    .refine(
+      (p) => PASSWORD_ASCII_ONLY.test(p),
+      "Password must contain only English letters, English digits, and allowed special characters",
+    ),
 });
 
 export const refreshTokenBodySchema = z.object({

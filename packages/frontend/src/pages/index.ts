@@ -13,6 +13,7 @@ export { ResumeWizard } from "./seeker/resume-wizard";
 export { RecruiterDashboard } from "./recruiter/dashboard";
 export { RecruiterProfile } from "./recruiter/profile";
 export { RecruiterJobs } from "./recruiter/jobs";
+export { RecruiterAllApplications } from "./recruiter/all-applications";
 export { CreateJob } from "./recruiter/create-job";
 export { EditJob } from "./recruiter/edit-job";
 export { JobApplications } from "./recruiter/job-applications";

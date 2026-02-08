@@ -1,4 +1,4 @@
-import { Container, Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createJobSchema } from "@/schemas/job.schemas";
@@ -47,7 +47,7 @@ export function CreateJob() {
   const onSubmit = form.handleSubmit((data) => create.mutate(data));
 
   return (
-    <Container maxW="container.md">
+    <Box maxW="container.md">
       <Heading size="lg" mb="6">
         ایجاد آگهی
       </Heading>
@@ -72,6 +72,6 @@ export function CreateJob() {
           </Button>
         </Stack>
       </form>
-    </Container>
+    </Box>
   );
 }

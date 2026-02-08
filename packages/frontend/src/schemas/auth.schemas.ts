@@ -37,13 +37,21 @@ export const passwordLoginSchema = z.object({
   password: z.string().min(1, "رمز عبور الزامی است"),
 });
 
-const passwordFieldSchema = z
+/** فقط حروف انگلیسی، اعداد انگلیسی (۰-۹ رد می‌شود) و کاراکترهای خاص مجاز */
+const ONLY_ENGLISH_AND_ASCII =
+  /^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{}|;':",.<>?/\\`~]+$/;
+
+export const passwordFieldSchema = z
   .string()
   .min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد")
   .max(128, "رمز عبور حداکثر ۱۲۸ کاراکتر")
   .regex(/[a-zA-Z]/, "رمز عبور باید حداقل یک حرف انگلیسی داشته باشد")
-  .regex(/\d/, "رمز عبور باید حداقل یک عدد داشته باشد")
-  .regex(/[^a-zA-Z0-9]/, "رمز عبور باید حداقل یک کاراکتر خاص (مثل !@#$%) داشته باشد");
+  .regex(/[0-9]/, "رمز عبور باید حداقل یک عدد انگلیسی داشته باشد")
+  .regex(/[^a-zA-Z0-9]/, "رمز عبور باید حداقل یک کاراکتر خاص (مثل !@#$%) داشته باشد")
+  .refine(
+    (p) => ONLY_ENGLISH_AND_ASCII.test(p),
+    "رمز عبور فقط باید شامل حروف انگلیسی، اعداد انگلیسی و کاراکترهای مجاز باشد (بدون حروف یا اعداد فارسی)",
+  );
 
 export const registerFormSchema = z
   .object({
@@ -51,12 +59,17 @@ export const registerFormSchema = z
     purpose: z.literal("register"),
     role: z.enum(["seeker", "recruiter"], { message: "نقش را انتخاب کنید" }),
     fullName: z.string().max(200).optional(),
+    companyName: z.string().max(200).optional(),
     password: passwordFieldSchema,
     confirmPassword: z.string().min(1, "تکرار رمز عبور الزامی است"),
   })
   .refine((data) => data.role !== "seeker" || (data.fullName?.trim()?.length ?? 0) > 0, {
     message: "نام و نام خانوادگی الزامی است",
     path: ["fullName"],
+  })
+  .refine((data) => data.role !== "recruiter" || (data.companyName?.trim()?.length ?? 0) > 0, {
+    message: "نام شرکت الزامی است",
+    path: ["companyName"],
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "رمز عبور و تکرار آن یکسان نیستند",

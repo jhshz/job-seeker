@@ -43,7 +43,7 @@ export const requestOtp = catchAsync(async (req: Request, res: Response): Promis
 });
 
 export const verifyOtp = catchAsync(async (req: Request, res: Response): Promise<void> => {
-  const { phoneE164, purpose, code, role, fullName } = req.body;
+  const { phoneE164, purpose, code, role, fullName, companyName } = req.body;
   const result = await authService.verifyOtpAndLogin(
     phoneE164,
     purpose,
@@ -52,6 +52,7 @@ export const verifyOtp = catchAsync(async (req: Request, res: Response): Promise
     getUserAgent(req),
     role,
     fullName,
+    companyName,
   );
   setAuthCookies(res, result.tokens.refreshToken);
   sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken });

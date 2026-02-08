@@ -11,6 +11,13 @@ export type RecruiterPublic = {
   jobs?: Job[];
 };
 
+export async function getRecruiterProfile() {
+  const { data } = await api.get<{ success: boolean; data: RecruiterProfile }>(
+    endpoints.recruiters.me,
+  );
+  return data.data;
+}
+
 export async function updateRecruiterProfile(payload: UpdateRecruiterProfilePayload) {
   const { data } = await api.patch<{ success: boolean; data: RecruiterProfile }>(
     endpoints.recruiters.me,

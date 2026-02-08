@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { Container, Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateJobSchema } from "@/schemas/job.schemas";
@@ -76,7 +76,7 @@ export function EditJob() {
   if (error || !job) return <ErrorState message="آگهی یافت نشد" onRetry={() => refetch()} />;
 
   return (
-    <Container maxW="container.md">
+    <Box maxW="container.md">
       <Heading size="lg" mb="6">
         ویرایش آگهی
       </Heading>
@@ -101,6 +101,6 @@ export function EditJob() {
           </Button>
         </Stack>
       </form>
-    </Container>
+    </Box>
   );
 }

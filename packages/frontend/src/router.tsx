@@ -3,6 +3,7 @@ import { AppShell } from "@/components/layouts/app-shell";
 import { AuthLayout } from "@/components/layouts/auth-layout";
 import { ProtectedRoute } from "@/components/layouts/protected-route";
 import { RoleRoute } from "@/components/layouts/role-route";
+import { RecruiterLayout } from "@/components/layouts/recruiter-layout";
 import {
   Home,
   Jobs,
@@ -19,6 +20,7 @@ import {
   RecruiterDashboard,
   RecruiterProfile,
   RecruiterJobs,
+  RecruiterAllApplications,
   CreateJob,
   EditJob,
   JobApplications,
@@ -84,7 +86,7 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <RoleRoute role="recruiter">
-              <Outlet />
+              <RecruiterLayout />
             </RoleRoute>
           </ProtectedRoute>
         ),
@@ -99,6 +101,7 @@ export const router = createBrowserRouter([
           { path: "jobs/create", element: <CreateJob /> },
           { path: "jobs/:jobId/edit", element: <EditJob /> },
           { path: "jobs/:jobId/applications", element: <JobApplications /> },
+          { path: "applications", element: <RecruiterAllApplications /> },
         ],
       },
     ],

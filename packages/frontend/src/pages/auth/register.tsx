@@ -30,6 +30,7 @@ export function Register() {
       purpose: "register",
       role: "seeker",
       fullName: "",
+      companyName: "",
       password: "",
       confirmPassword: "",
     },
@@ -37,6 +38,7 @@ export function Register() {
 
   const role = form.watch("role");
   const isSeeker = role === "seeker";
+  const isRecruiter = role === "recruiter";
 
   const onSubmit = form.handleSubmit((data) => {
     requestOtp.mutate(
@@ -49,6 +51,7 @@ export function Register() {
               purpose: "register" as const,
               role: data.role,
               fullName: data.fullName,
+              companyName: data.companyName,
               password: data.password,
               expiresAt: res.expiresAt,
             },
@@ -111,13 +114,21 @@ export function Register() {
               </Field.ErrorText>
             </Field.Root>
           )}
+          {isRecruiter && (
+            <Field.Root invalid={!!form.formState.errors.companyName}>
+              <Field.Label>نام شرکت</Field.Label>
+              <Input
+                {...form.register("companyName")}
+                placeholder="نام شرکت یا سازمان را وارد کنید"
+              />
+              <Field.ErrorText>
+                {form.formState.errors.companyName?.message}
+              </Field.ErrorText>
+            </Field.Root>
+          )}
           <Field.Root invalid={!!form.formState.errors.phoneE164}>
             <Field.Label>شماره موبایل</Field.Label>
-            <Input
-              {...form.register("phoneE164")}
-              placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-              dir="ltr"
-            />
+            <Input {...form.register("phoneE164")} placeholder="۰۹۱۲۳۴۵۶۷۸۹" />
             <Field.ErrorText>
               {form.formState.errors.phoneE164?.message}
             </Field.ErrorText>

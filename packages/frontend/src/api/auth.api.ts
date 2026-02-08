@@ -15,6 +15,8 @@ export type OtpVerifyPayload = {
   role?: "seeker" | "recruiter";
   /** Full name for seeker when purpose is "register" and role is "seeker" */
   fullName?: string;
+  /** Company name for recruiter when purpose is "register" and role is "recruiter" */
+  companyName?: string;
 };
 export type AuthPayload = { user: User; accessToken: string };
 

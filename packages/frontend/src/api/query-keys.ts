@@ -5,6 +5,7 @@ export const queryKeys = {
     detail: (id: string) => ["jobs", id] as const,
   },
   recruiters: {
+    me: ["recruiters", "me"] as const,
     public: (id: string) => ["recruiters", "public", id] as const,
     jobs: ["recruiters", "jobs"] as const,
     jobDetail: (jobId: string) => ["recruiters", "jobs", jobId] as const,

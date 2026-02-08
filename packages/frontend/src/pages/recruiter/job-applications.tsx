@@ -1,5 +1,5 @@
-import { useParams } from "react-router";
-import { Container, Heading, Table, Text } from "@chakra-ui/react";
+import { Link, useParams } from "react-router";
+import { Box, Heading, Table, Text, Button } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getJobApplications } from "@/api/recruiters.api";
 import { queryKeys } from "@/api/query-keys";
@@ -21,7 +21,12 @@ export function JobApplications() {
   const applications = data?.applications ?? [];
 
   return (
-    <Container maxW="container.xl">
+    <Box>
+      <Link to="/recruiter/applications">
+        <Button size="sm" variant="ghost" mb="4">
+          ← بازگشت به لیست درخواست‌ها
+        </Button>
+      </Link>
       <Heading size="lg" mb="6">
         درخواست‌های این آگهی
       </Heading>
@@ -47,6 +52,6 @@ export function JobApplications() {
           </Table.Body>
         </Table.Root>
       )}
-    </Container>
+    </Box>
   );
 }

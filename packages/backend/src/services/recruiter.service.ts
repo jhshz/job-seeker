@@ -27,14 +27,17 @@ export class RecruiterService {
     return profile;
   }
 
-  async getOrCreateProfile(userId: string) {
+  async getOrCreateProfile(userId: string, initialData?: { companyName?: string }) {
     let profile = await RecruiterProfile.findOne({
       userId: new mongoose.Types.ObjectId(userId),
     });
     if (!profile) {
+      const companyName = (initialData?.companyName?.trim()?.length
+        ? initialData.companyName.trim()
+        : "شرکت") as string;
       profile = await RecruiterProfile.create({
         userId: new mongoose.Types.ObjectId(userId),
-        companyName: "",
+        companyName,
         companyDescription: "",
         website: "",
         location: "",

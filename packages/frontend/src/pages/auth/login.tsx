@@ -1,16 +1,27 @@
-import { Box, Button, Field, Input, Stack, Tabs } from "@chakra-ui/react";
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  Field,
+  Group,
+  Input,
+  Stack,
+  Tabs,
+} from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { otpRequestSchema, passwordLoginSchema } from "@/schemas/auth.schemas";
 import type { z } from "zod";
 import { useRequestOtp, useLoginPassword } from "@/hooks/use-auth";
 import { useNavigate, Link as RouterLink } from "react-router";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 
 type OtpForm = z.infer<typeof otpRequestSchema>;
 type PasswordForm = z.infer<typeof passwordLoginSchema>;
 
 export function Login() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const requestOtp = useRequestOtp();
   const loginPassword = useLoginPassword();
 
@@ -45,62 +56,89 @@ export function Login() {
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Stack gap="6" w="full" maxW="sm">
-        <Tabs.Root defaultValue="otp" variant="enclosed" fitted>
-        <Tabs.List>
-          <Tabs.Trigger value="otp">ورود با کد تایید</Tabs.Trigger>
-          <Tabs.Trigger value="password">ورود با رمز عبور</Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content value="otp">
-          <form onSubmit={onOtpSubmit}>
-            <Stack gap="4" pt="4">
-              <Field.Root invalid={!!otpForm.formState.errors.phoneE164}>
-                <Field.Label>شماره موبایل</Field.Label>
-                <Input
-                  {...otpForm.register("phoneE164")}
-                  placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                  dir="ltr"
-                />
-                <Field.ErrorText>
-                  {otpForm.formState.errors.phoneE164?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Button type="submit" loading={requestOtp.isPending} w="full">
-                دریافت کد تایید
-              </Button>
-            </Stack>
-          </form>
-        </Tabs.Content>
-        <Tabs.Content value="password">
-          <form onSubmit={onPasswordSubmit}>
-            <Stack gap="4" pt="4">
-              <Field.Root invalid={!!passwordForm.formState.errors.phoneE164}>
-                <Field.Label>شماره موبایل</Field.Label>
-                <Input
-                  {...passwordForm.register("phoneE164")}
-                  placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                  dir="ltr"
-                />
-                <Field.ErrorText>
-                  {passwordForm.formState.errors.phoneE164?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!passwordForm.formState.errors.password}>
-                <Field.Label>رمز عبور</Field.Label>
-                <Input
-                  {...passwordForm.register("password")}
-                  type="password"
-                  placeholder="رمز عبور"
-                />
-                <Field.ErrorText>
-                  {passwordForm.formState.errors.password?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Button type="submit" loading={loginPassword.isPending} w="full">
-                ورود
-              </Button>
-            </Stack>
-          </form>
-        </Tabs.Content>
+        <Tabs.Root defaultValue="otp" variant="subtle" fitted dir="rtl">
+          <Tabs.List justifyContent="stretch">
+            <Tabs.Trigger value="otp" flex="1">
+              ورود با کد تایید
+            </Tabs.Trigger>
+            <Tabs.Trigger value="password" flex="1">
+              ورود با رمز عبور
+            </Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Content value="otp">
+            <form onSubmit={onOtpSubmit}>
+              <Stack gap="4" pt="4">
+                <Field.Root
+                  invalid={!!otpForm.formState.errors.phoneE164}
+                  dir="rtl"
+                >
+                  <Field.Label>شماره موبایل</Field.Label>
+                  <Input
+                    {...otpForm.register("phoneE164")}
+                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                  />
+                  <Field.ErrorText>
+                    {otpForm.formState.errors.phoneE164?.message}
+                  </Field.ErrorText>
+                </Field.Root>
+                <Button type="submit" loading={requestOtp.isPending} w="full">
+                  دریافت کد تایید
+                </Button>
+              </Stack>
+            </form>
+          </Tabs.Content>
+          <Tabs.Content value="password">
+            <form onSubmit={onPasswordSubmit}>
+              <Stack gap="4" pt="4">
+                <Field.Root
+                  invalid={!!passwordForm.formState.errors.phoneE164}
+                  dir="rtl"
+                >
+                  <Field.Label>شماره موبایل</Field.Label>
+                  <Input
+                    {...passwordForm.register("phoneE164")}
+                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                  />
+                  <Field.ErrorText>
+                    {passwordForm.formState.errors.phoneE164?.message}
+                  </Field.ErrorText>
+                </Field.Root>
+                <Field.Root
+                  invalid={!!passwordForm.formState.errors.password}
+                  dir="rtl"
+                >
+                  <Field.Label>رمز عبور</Field.Label>
+                  <Group attached w="full">
+                    <Input
+                      flex="1"
+                      {...passwordForm.register("password")}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="رمز عبور"
+                    />
+                    <Button
+                      type="button"
+                      aria-label={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
+                      bg="bg.subtle"
+                      variant="outline"
+                      onClick={() => setShowPassword((p) => !p)}
+                    >
+                      {showPassword ? <LuEyeOff /> : <LuEye />}
+                    </Button>
+                  </Group>
+                  <Field.ErrorText>
+                    {passwordForm.formState.errors.password?.message}
+                  </Field.ErrorText>
+                </Field.Root>
+                <Button
+                  type="submit"
+                  loading={loginPassword.isPending}
+                  w="full"
+                >
+                  ورود
+                </Button>
+              </Stack>
+            </form>
+          </Tabs.Content>
         </Tabs.Root>
         <Box display="flex" alignItems="center" justifyContent="center" gap="2">
           <span>حساب کاربری ندارید؟</span>

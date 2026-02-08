@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Container, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Heading, SimpleGrid, Text, Button, Flex } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { listRecruiterJobs } from "@/api/recruiters.api";
 import { queryKeys } from "@/api/query-keys";
@@ -19,38 +19,52 @@ export function RecruiterJobs() {
   const jobs = data ?? [];
 
   return (
-    <Container maxW="container.xl">
-      <Heading size="lg" mb="4">
-        آگهی‌های من
-      </Heading>
-      <Link
-        to="/recruiter/jobs/create"
-        style={{
-          display: "inline-block",
-          marginBottom: "24px",
-          color: "var(--chakra-colors-blue-500)",
-        }}
-      >
-        ایجاد آگهی جدید
-      </Link>
+    <Box>
+      <Flex justify="space-between" align="center" flexWrap="wrap" gap="4" mb="6">
+        <Heading size="lg">آگهی‌های من</Heading>
+        <Link to="/recruiter/jobs/create">
+          <Button colorPalette="brand" size="sm">
+            ایجاد آگهی جدید
+          </Button>
+        </Link>
+      </Flex>
       {jobs.length === 0 ? (
-        <Text color="fg.muted">آگهی‌ای یافت نشد</Text>
+        <Box
+          p="12"
+          textAlign="center"
+          borderRadius="xl"
+          borderWidth="1px"
+          borderColor="border"
+          bg="bg.muted"
+        >
+          <Text color="fg.muted" mb="4">
+            آگهی‌ای یافت نشد. اولین آگهی خود را ایجاد کنید.
+          </Text>
+          <Link to="/recruiter/jobs/create">
+            <Button colorPalette="brand">ایجاد آگهی</Button>
+          </Link>
+        </Box>
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap="4">
           {jobs.map((job) => (
-            <div key={job.id}>
+            <Box key={job.id}>
               <JobCard job={job} />
-              <Link to={`/recruiter/jobs/${job.id}/edit`} style={{ fontSize: "14px", marginTop: "8px", display: "inline-block" }}>
-                ویرایش
-              </Link>
-              <span> | </span>
-              <Link to={`/recruiter/jobs/${job.id}/applications`} style={{ fontSize: "14px" }}>
-                درخواست‌ها
-              </Link>
-            </div>
+              <Flex gap="2" mt="2" flexWrap="wrap">
+                <Link to={`/recruiter/jobs/${job.id}/edit`}>
+                  <Button size="xs" variant="outline">
+                    ویرایش
+                  </Button>
+                </Link>
+                <Link to={`/recruiter/jobs/${job.id}/applications`}>
+                  <Button size="xs" variant="ghost" colorPalette="brand">
+                    درخواست‌ها
+                  </Button>
+                </Link>
+              </Flex>
+            </Box>
           ))}
         </SimpleGrid>
       )}
-    </Container>
+    </Box>
   );
 }

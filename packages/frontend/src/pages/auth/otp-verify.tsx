@@ -16,6 +16,7 @@ type OtpVerifyState = {
   purpose?: "login" | "register";
   role?: "seeker" | "recruiter";
   fullName?: string;
+  companyName?: string;
   password?: string;
   expiresAt?: string;
 };
@@ -110,6 +111,7 @@ export function OtpVerify() {
             code: data.code,
             role: data.role,
             fullName: state?.fullName?.trim() || undefined,
+            companyName: state?.companyName?.trim() || undefined,
             password: state?.password,
           }
         : { phoneE164: data.phoneE164, purpose: data.purpose, code: data.code };

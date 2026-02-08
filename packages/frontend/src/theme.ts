@@ -68,6 +68,10 @@ const greenThemeConfig = defineConfig({
       bg: "bg",
       lineHeight: "1.5",
       colorPalette: "brand",
+      direction: "rtl",
+    },
+    body: {
+      direction: "rtl",
     },
   }),
 });
