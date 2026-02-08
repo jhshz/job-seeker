@@ -9,6 +9,13 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  HiOutlineBriefcase,
+  HiOutlinePlus,
+  HiOutlineClipboard,
+  HiOutlineUser,
+} from "react-icons/hi2";
+import type { IconType } from "react-icons";
 import { listRecruiterJobs } from "@/api/recruiters.api";
 import { queryKeys } from "@/api/query-keys";
 import { Loading } from "@/components/ui/loading";
@@ -18,12 +25,12 @@ function QuickActionCard({
   to,
   title,
   description,
-  icon,
+  Icon,
 }: {
   to: string;
   title: string;
   description: string;
-  icon: string;
+  Icon: IconType;
 }) {
   return (
     <Link to={to} style={{ textDecoration: "none" }}>
@@ -40,9 +47,9 @@ function QuickActionCard({
         }}
         transition="all 0.2s"
       >
-        <Text fontSize="2xl" mb="3" aria-hidden>
-          {icon}
-        </Text>
+        <Flex mb="3" color="brand.fg" aria-hidden>
+          <Icon size={28} />
+        </Flex>
         <Heading size="sm" mb="2" fontWeight="semibold">
           {title}
         </Heading>
@@ -120,25 +127,25 @@ export function RecruiterDashboard() {
           to="/recruiter/jobs"
           title="آگهی‌های من"
           description="مشاهده و مدیریت تمام آگهی‌های شغلی"
-          icon="💼"
+          Icon={HiOutlineBriefcase}
         />
         <QuickActionCard
           to="/recruiter/jobs/create"
           title="ایجاد آگهی"
           description="ثبت آگهی شغلی جدید"
-          icon="➕"
+          Icon={HiOutlinePlus}
         />
         <QuickActionCard
           to="/recruiter/applications"
           title="درخواست‌ها"
           description="مشاهده درخواست‌های دریافتی"
-          icon="📋"
+          Icon={HiOutlineClipboard}
         />
         <QuickActionCard
           to="/recruiter/profile"
           title="پروفایل"
           description="ویرایش پروفایل و تغییر رمز عبور"
-          icon="👤"
+          Icon={HiOutlineUser}
         />
       </SimpleGrid>
     </Box>

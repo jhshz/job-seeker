@@ -1,30 +1,35 @@
 import { Outlet, Link, useLocation } from "react-router";
+import { Box, Container, Flex, Text, Badge } from "@chakra-ui/react";
 import {
-  Box,
-  Container,
-  Flex,
-  Text,
-  Separator,
-  Badge,
-} from "@chakra-ui/react";
+  HiOutlineChartBar,
+  HiOutlineBriefcase,
+  HiOutlinePlus,
+  HiOutlineClipboard,
+  HiOutlineUser,
+} from "react-icons/hi2";
+import type { IconType } from "react-icons";
 
-const navItems = [
-  { to: "/recruiter/dashboard", label: "داشبورد", icon: "📊" },
-  { to: "/recruiter/jobs", label: "آگهی‌های من", icon: "💼" },
-  { to: "/recruiter/jobs/create", label: "ایجاد آگهی", icon: "➕" },
-  { to: "/recruiter/applications", label: "درخواست‌ها", icon: "📋" },
-  { to: "/recruiter/profile", label: "پروفایل", icon: "👤" },
+const navItems: { to: string; label: string; Icon: IconType }[] = [
+  { to: "/recruiter/dashboard", label: "داشبورد", Icon: HiOutlineChartBar },
+  { to: "/recruiter/jobs", label: "آگهی‌های من", Icon: HiOutlineBriefcase },
+  { to: "/recruiter/jobs/create", label: "ایجاد آگهی", Icon: HiOutlinePlus },
+  {
+    to: "/recruiter/applications",
+    label: "درخواست‌ها",
+    Icon: HiOutlineClipboard,
+  },
+  { to: "/recruiter/profile", label: "پروفایل", Icon: HiOutlineUser },
 ];
 
 function NavItem({
   to,
   label,
-  icon,
+  Icon,
   isActive,
 }: {
   to: string;
   label: string;
-  icon: string;
+  Icon: IconType;
   isActive: boolean;
 }) {
   return (
@@ -44,8 +49,8 @@ function NavItem({
         }}
         transition="all 0.2s"
       >
-        <Text fontSize="lg" aria-hidden>
-          {icon}
+        <Text fontSize="lg" aria-hidden display="flex" alignItems="center">
+          <Icon size={20} />
         </Text>
         <Text fontSize="sm">{label}</Text>
       </Flex>
@@ -57,10 +62,20 @@ export function RecruiterLayout() {
   const location = useLocation();
 
   const isActive = (path: string) => {
+    const { pathname } = location;
     if (path === "/recruiter/dashboard") {
-      return location.pathname === "/recruiter/dashboard" || location.pathname === "/recruiter";
+      return pathname === "/recruiter/dashboard" || pathname === "/recruiter";
     }
-    return location.pathname.startsWith(path);
+    if (pathname === path) return true;
+    if (!pathname.startsWith(path + "/")) return false;
+    // On a sub-route of path; only active if no other nav item is a more specific match
+    const moreSpecific = navItems.some(
+      (item) =>
+        item.to !== path &&
+        item.to.length > path.length &&
+        pathname.startsWith(item.to),
+    );
+    return !moreSpecific;
   };
 
   return (
@@ -77,27 +92,13 @@ export function RecruiterLayout() {
           p="2"
           alignSelf={{ base: "stretch", lg: "flex-start" }}
         >
-          <Flex
-            px="3"
-            py="2"
-            mb="2"
-            align="center"
-            gap="2"
-            borderBottomWidth="1px"
-            borderColor="border"
-            pb="3"
-          >
-            <Badge colorPalette="brand" size="lg" px="2" py="1" borderRadius="md">
-              پنل کارفرما
-            </Badge>
-          </Flex>
           <Flex direction="column" gap="1">
             {navItems.map((item) => (
               <NavItem
                 key={item.to}
                 to={item.to}
                 label={item.label}
-                icon={item.icon}
+                Icon={item.Icon}
                 isActive={isActive(item.to)}
               />
             ))}
